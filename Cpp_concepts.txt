@@ -23,3 +23,44 @@ Structure
             r.breath = 12;
         }
         
+Pointer
+    a adress variable store only the address of data, it use to access data inderectly
+    to access heap memory we use pointer
+    pointer also use for parameter passing
+
+    example for data pinting-
+    int a = 10; data variable;
+    int *p; declaration
+    p = &a; initialization of pinter this will have address of data variable
+    printf("%d",*p)
+
+    example for heap memory alocating-
+    use malloc t access the heap memory
+    int main(){
+        int *p;
+        p = (int *)malloc(5*sizeof(int)); for c
+        p = new int(5); cpp code to create heap memory
+    }
+
+    every data in pointer allocate same size of memory 
+
+Reference
+    it is used to access tha value 
+    example 
+    int a = 10;
+    int &r = a;// reference to a , it wil also change the value of a when we update the value of r
+    use for parameter passing
+
+Pointer to Structure
+
+    struct rectangle *p = &a;
+    a.length =10;     }
+    (*p).length = 10; these 3 are the syntax for the pointer for structure
+    p->length =10;  }
+
+    heap memory for pointer structure
+    struct recctangle *p;
+    p=(struct recctangle *)malloc(sizeof(struct recctangle)) //heap memory for the pointer structure in c
+    p->length= 10;
+    p->breath = 12;
+    
