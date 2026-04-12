@@ -1,1 +1,1 @@
-# learning
+This Git repos will used to update my learning of DSA from scratch
