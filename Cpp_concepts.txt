@@ -22,6 +22,4 @@ Structure
             r.length = 10;
             r.breath = 12;
         }
-
-    
-
+        
