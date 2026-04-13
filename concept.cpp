@@ -1,6 +1,5 @@
 #include<iostream>
 #include<vector>
-
 using namespace std;
 
 //rectangle structure
@@ -95,15 +94,60 @@ using namespace std;
 // }
 
 //functions
-int add(int a, int b){ //make int fuction for having a return value; and for making function without return value use void
-    int c = a+b;
-    return c;
-}
+// int add(int a, int b){ //make int fuction for having a return value; and for making function without return value use void
+//     int c = a+b;
+//     return c;
+// }
 
+// int main(){
+//     int n1 = 12;
+//     int n2 = 14;
+//     int sum = add(n1,n2);
+//     cout<<sum;
+//     return 0;
+// }
+
+//parameter passing call by header
+// void swap(int *a,int *b){
+//     int temp;
+//     temp = *a;
+//     *a = *b ;
+//     *b = temp;
+// }
+// int main(){
+//     int n1, n2;
+//     n1=10;
+//     n2=20;
+//     swap(&n1,&n2);
+//     cout<<n1<<endl<<n2;
+//     return 0;
+// }
+
+// call by reference
+// void swap(int &x, int &y){
+//     int temp;
+//     temp = x;
+//     x = y;
+//     y = temp;
+// }
+// int main(){
+//     int n1,n2;
+//     n1 = 10;
+//     n2 = 20;
+//     swap(n1,n2);
+//     cout<<n1<<endl<<n2;
+//     return 0;
+// }
+
+// Array as parameter
+void fun(int *A,int n){ //if we update the data of array the original aray also achive updates
+    for(int i = 0; i<n; i++){
+        cout<<A[i]<<" ";
+    }
+}
 int main(){
-    int n1 = 12;
-    int n2 = 14;
-    int sum = add(n1,n2);
-    cout<<sum;
+    int a[] = {1,12,3,4,5};
+    int n = 5;
+    fun(a,n);
     return 0;
 }
