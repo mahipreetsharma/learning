@@ -52,7 +52,6 @@ Reference
     use for parameter passing
 
 Pointer to Structure
-
     struct rectangle *p = &a;
     a.length =10;     }
     (*p).length = 10; these 3 are the syntax for the pointer for structure
@@ -64,3 +63,18 @@ Pointer to Structure
     p->length= 10;
     p->breath = 12;
     
+functions
+    fuction is set of instructions of code to perform a specific task.
+    functions are used for code reusability
+    example-
+        int add(int a,int b){ //defining of functions   
+            int c = a+b;
+            return c;
+        }
+
+        int main(){
+            int x =10;
+            int y = 20;
+            int z = add(x,y); // intialization of function
+            cout<<z;  
+        }

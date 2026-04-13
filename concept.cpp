@@ -1,4 +1,6 @@
 #include<iostream>
+#include<vector>
+
 using namespace std;
 
 //rectangle structure
@@ -58,18 +60,50 @@ using namespace std;
 //     return 0;
 // }
 
-struct rectangle
-{
-    int lenght;
-    int breath;
-};
+//pointer on structure
+// struct rectangle
+// {
+//     int lenght;
+//     int breath;
+// };
+
+// int main(){
+//     rectangle r = {10,5};
+//     cout<<r.lenght;
+//     cout<<r.breath;
+//     rectangle *p=&r;
+//     cout<<endl<<p->lenght<<endl;
+//     cout<<p->breath<<endl;
+//     return 0;
+// }
+
+//heap memory allocation for pointer on structure
+// struct rectangle{
+//     int length;
+//     int breath;
+// };
+// int main(){
+//         struct rectangle *p;
+//         p = new rectangle;
+
+//         p->breath=10;
+//         p->length=12;
+
+//         cout<<p->breath<<endl;
+//         cout<<p->length<<endl;
+//     return 0;
+// }
+
+//functions
+int add(int a, int b){ //make int fuction for having a return value; and for making function without return value use void
+    int c = a+b;
+    return c;
+}
 
 int main(){
-    rectangle r = {10,5};
-    cout<<r.lenght;
-    cout<<r.breath;
-    rectangle *p=&r;
-    cout<<endl<<p->lenght<<endl;
-    cout<<p->breath<<endl;
+    int n1 = 12;
+    int n2 = 14;
+    int sum = add(n1,n2);
+    cout<<sum;
     return 0;
 }
