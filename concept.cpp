@@ -179,3 +179,77 @@ using namespace std;
 
 //     return 0;
 // }
+
+//structure as parameter
+// struct test {
+//     int A[5];
+//     int n;
+// };
+
+// void fun(struct test t1){
+//     for(int i = 0 ; i<t1.n; i++){
+//         cout<<t1.A[i]<<" ";
+//     }
+// }
+
+// int main(){
+//     struct test t = {{2,3,4,5,6},5};
+//     fun(t);
+//     return 0;
+// }
+
+// structure and function
+// struct Rectangle{
+//     int lenght;
+//     int breath;
+// };
+
+// void init(struct Rectangle *r, int l, int b){
+//     r->lenght = l;
+//     r->breath = b;
+// }
+
+// int area(struct Rectangle r){
+//     return r.lenght*r.breath;
+// }
+
+// void change_length(struct Rectangle *r, int l){
+//     r->lenght = l;
+// }
+
+// int main(){
+//     struct Rectangle r1;
+//     init(&r1,10,5);
+//     change_length(&r1,20);
+//     cout<<area(r1);
+//     return 0;
+// }
+
+//class and constructor
+    class Rectangle{
+        private:
+        int breath;
+        int length;
+        
+        public:
+            void inti(int l, int b){
+                length = l;
+                breath = b;
+            }
+
+            int area(){
+                return length*breath;
+            }
+            void change_length(int l){
+                length = l;
+            }
+    };
+    
+    int main(){
+        Rectangle r;
+        r.inti(10,2);
+        r.area();
+        cout<<r.area()<<endl;
+        r.change_length(20);
+        cout<<r.area();
+    }

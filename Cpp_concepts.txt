@@ -142,4 +142,10 @@ Structure as Parameter
         struct recctangle r={1,2};
         area(r);
     }
-    
+
+Structure and Function
+    call by vaue use . opoerator
+    call by address use -> operator
+
+Classes and Constructor
+    Class containt the value as well as funtions
