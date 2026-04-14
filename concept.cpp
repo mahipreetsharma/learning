@@ -140,14 +140,42 @@ using namespace std;
 // }
 
 // Array as parameter
-void fun(int *A,int n){ //if we update the data of array the original aray also achive updates
-    for(int i = 0; i<n; i++){
-        cout<<A[i]<<" ";
-    }
-}
-int main(){
-    int a[] = {1,12,3,4,5};
-    int n = 5;
-    fun(a,n);
-    return 0;
-}
+// void fun(int *A,int n){ //if we update the data of array the original aray also achive updates
+//     cout<<n<<endl;
+//     cout<<sizeof(A)/sizeof(A[0])<<endl;
+//     for(int i = 0; i<n; i++){
+//         cout<<A[i]<<" ";
+//     }
+// }
+// int main(){
+//     int a[] = {1,12,3,4,5};
+//     int n = 5;
+//     fun(a,n);
+
+//     for(int x:a){
+//         cout<<x<<" ";
+//     }
+//     return 0;
+// }
+
+///array function
+// int * fun(int size){// creating array at heap using pointer
+//     int *p;
+//     p = new int[size];
+
+//     for(int i = 0; i<size; i++){
+//         p[i] = i+1;
+//     }
+//     return p;
+// }
+
+// int main(){
+//     int *ptr,sz=10;
+//     ptr = fun(sz);
+
+//     for(int i = 0; i<sz; i++){
+//         cout<<ptr[i]<<" ";
+//     }
+
+//     return 0;
+// }

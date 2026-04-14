@@ -128,3 +128,18 @@ Arrays as Parameter
         A = fun(5);
         return 0;
     }
+
+Structure as Parameter
+    first create the structure and then create parameter of that structure
+    a new function will use to calculate
+    struct r{
+
+    }
+    int area(struct recctangle &a){
+
+    }
+    int main(){
+        struct recctangle r={1,2};
+        area(r);
+    }
+    
