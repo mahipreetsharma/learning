@@ -257,39 +257,39 @@ using namespace std;
     // }
 
 //Template class
-// template<class T>
-// class Arith{
-//     private:
-//         T a;
-//         T b;
-//     public:
-//         Arith(T a, T b);
-//         T add();
-//         T sub();
-// };
-// template<class T>
-// Arith<T>::Arith(T a, T b){
-//     this->a = a;
-//     this->b = b;
-// }
+template<class T>
+class Arith{
+    private:
+        T a;
+        T b;
+    public:
+        Arith(T a, T b);
+        T add();
+        T sub();
+};
+template<class T>
+Arith<T>::Arith(T a, T b){
+    this->a = a;
+    this->b = b;
+}
 
-// template<class T>
-// T Arith<T>::add(){
-//     T c ;
-//     c = a+b;
-//     return c;
-// }
+template<class T>
+T Arith<T>::add(){
+    T c ;
+    c = a+b;
+    return c;
+}
 
-// template<class T>
-// T Arith<T>::sub(){
-//     T c;
-//     c = a-b;
-//     return c;
-// }
+template<class T>
+T Arith<T>::sub(){
+    T c;
+    c = a-b;
+    return c;
+}
 
-// int main(){
-//     Arith<int> num(12,2);
-//     cout<<num.add()<<endl;
-//     cout<<num.sub();
-//     return 0;
-// }
+int main(){
+    Arith<int> num(12,2);
+    cout<<num.add()<<endl;
+    cout<<num.sub();
+    return 0;
+}

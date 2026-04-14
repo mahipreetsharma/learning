@@ -162,3 +162,7 @@ Type of Program
     Modular programming
         Breaking of the main fuction into several functions so that code will become more usable and debugging get some advantage
         
+Template class
+    it use to make class more useful for perform functions for any data type
+    use template<class T> before declar of of variable or function
+    then use T for the data type declaration

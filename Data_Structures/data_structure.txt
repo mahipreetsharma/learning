@@ -1,0 +1,54 @@
+Data structure is arrengment of the data inside the main memory during the execution of code
+CPU<-->Memory<-->Permanent_Storage
+We keep the program in parmanent_storage
+Program will brough to the Memory
+Then cpu execute and provide output
+
+In this steps the arrengment of the data is called Data structure to process faster on that data
+
+Databases
+    The data is stored in the form of relational tables is called databases
+
+Commercial data categories
+    1.Operational data which is used daily
+    2.legacy data is the historical data
+
+    BIG DATA - Legacy data is keeped in Data Wharehouse as historical data
+
+Static and Dynamic Memory
+    Main Memory:
+        Memory is divided into several addresable container of a byte.
+        The main memory is divide into 3 types
+            Heap
+            Stack
+            Code
+        
+            Stack:
+                the varible defined in the main fuction is stored in stack, as stack frame. It is also called as actication Record of that function. IT is defined by compiler while compiletime it is static memory. The record will delete after the function is ends.
+            Code:
+                The code funcitons are stored in the code memory
+             Heap:
+                Heap is unorganized memory. It is treated as a resource for a program. It should be used and clear as well as use of heap memory. Program does't access heap memory directly. Heap memory is access through pointers.
+                int *p;
+                p = new int[5]; //creating heap memory in CPP
+                p = (int *)malloc(2*5);//creating heap in C language
+                delete []p; // we should clear heap memory if it is not used
+                p = NULL; w
+                this will create a arrya in heap memory 
+
+categories of Data Structures
+    Physical Structure:
+        Array and Linked list:
+            this structure defines how the memory is allocated.
+            Array can be created in Heap as well As Stack
+            Linked list is the dynamic data structure
+            Linked list is always created in headp, the pointer in linked list point to the specific data
+
+    logical data structure:
+        Stack Queues Tree Hash Table:
+            Stack and Queue are linear data structure, it uses array and linked list to make queue and stack.
+            Trees and Graph are non linear
+            Hash Table are Tabular
+
+TIme and Space Complexity
+    T
