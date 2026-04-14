@@ -146,6 +146,19 @@ Structure as Parameter
 Structure and Function
     call by vaue use . opoerator
     call by address use -> operator
+    Structure's all component are public
 
 Classes and Constructor
+    class's all component are divided into publlic, class etc
     Class containt the value as well as funtions
+    Create object for the class 
+    Create Constructor for initialization. 
+    constructor have same name as class name
+    constructor does't have a return type
+    we create a deconstructor to erase the used memroy by constructor
+Type of Program
+    Monolithic programming
+        The program which is fully written in the main function
+    Modular programming
+        Breaking of the main fuction into several functions so that code will become more usable and debugging get some advantage
+        

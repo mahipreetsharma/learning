@@ -226,30 +226,70 @@ using namespace std;
 // }
 
 //class and constructor
-    class Rectangle{
-        private:
-        int breath;
-        int length;
+    // class Rectangle{
+    //     private:
+    //     int breath;
+    //     int length;
         
-        public:
-            void inti(int l, int b){
-                length = l;
-                breath = b;
-            }
+    //     public:
+    //         Rectangle(int l, int b){
+    //             length = l;
+    //             breath = b;
+    //         }
 
-            int area(){
-                return length*breath;
-            }
-            void change_length(int l){
-                length = l;
-            }
-    };
-    
-    int main(){
-        Rectangle r;
-        r.inti(10,2);
-        r.area();
-        cout<<r.area()<<endl;
-        r.change_length(20);
-        cout<<r.area();
-    }
+    //         int area(){
+    //             return length*breath;
+    //         }
+    //         void change_length(int l){
+    //             length = l;
+    //         }
+
+    //         ~Rectangle(){
+    //             //nothing can be write here
+    //             cout<<"destructor";
+    //         }
+    // };
+
+    // int main(){
+    //     Rectangle r{10,2};
+    //     r.area();
+    //     cout<<r.area();
+    // }
+
+//Template class
+// template<class T>
+// class Arith{
+//     private:
+//         T a;
+//         T b;
+//     public:
+//         Arith(T a, T b);
+//         T add();
+//         T sub();
+// };
+// template<class T>
+// Arith<T>::Arith(T a, T b){
+//     this->a = a;
+//     this->b = b;
+// }
+
+// template<class T>
+// T Arith<T>::add(){
+//     T c ;
+//     c = a+b;
+//     return c;
+// }
+
+// template<class T>
+// T Arith<T>::sub(){
+//     T c;
+//     c = a-b;
+//     return c;
+// }
+
+// int main(){
+//     Arith<int> num(12,2);
+//     cout<<num.add()<<endl;
+//     cout<<num.sub();
+//     return 0;
+// }
