@@ -50,5 +50,9 @@ categories of Data Structures
             Trees and Graph are non linear
             Hash Table are Tabular
 
-TIme and Space Complexity
-    T
+Time and Space Complexity
+    Time Complexity 
+    O(n) Time require is equal to the number of elements
+    O(n^2) Each element is processing each element the time will be nXn = n^2
+    O(log n) If not every element is processed it is called log n
+    
