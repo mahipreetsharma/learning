@@ -1,0 +1,29 @@
+Recursion
+    When a function call itself then it is called recursion
+    Inside a recursive function there should be a condition which ends the recursion
+    Recursion function is traced in the tree form
+
+example 
+    void fun(int n){
+        if(n>0){
+            printf("%d",n);
+            fun(n-1);
+        }
+    }
+    void main(){
+        int x = 3;
+        fun(x)
+    }
+
+    tree representation
+    fun 3
+    3---fun(2)
+        2---fun(1)
+            1---fun(0)
+                X
+                output will 3 2 1 ;
+
+    Recursion saves in stack form
+
+Time complexity
+    according to the input iteration value , n
