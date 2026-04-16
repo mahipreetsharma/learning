@@ -40,3 +40,29 @@ using namespace std;
 //     cout<<fun(b)<<endl;
 // } o/p = 25
 
+//tree recursion
+// int fun(int n ){
+//     if(n>0){
+//         cout<<n;
+//         fun(n-1);
+//         fun(n-1);
+//     }
+// }
+
+// int main(){
+//     int a =3;
+//     fun(a);
+// } o/p = 3211211
+
+// Nested Recursion
+int fun(int n){
+    if(n>100){
+        return n-10;
+    }else{
+    return fun(fun(n+11));
+    }
+}
+int main(){
+    int a = fun(95);
+    cout<<a;
+}

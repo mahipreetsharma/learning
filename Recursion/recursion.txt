@@ -27,3 +27,21 @@ example
 
 Time complexity
     according to the input iteration value , n
+
+Types of recursion
+tail recursion
+head recursion
+tree recursion
+inderect recursion
+nested recursion
+
+    Tail Recursion
+        It should not perform any task while returning time.
+    Head Recursion
+        If all processing is done after the function call. all performing are done while reeturning time
+    Tree recursion
+        If there is more than one function call.
+    Indrect recursion
+        if function call is not directly, the call is in cycle using multiple funtions.
+    Nested Recursion
+        When function call itself as a function fun(fun(n-1))
