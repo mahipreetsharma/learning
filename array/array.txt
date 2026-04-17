@@ -20,10 +20,13 @@ Static vs Dynamic array
     Dynamic array
         the size of the array is defined while runtime
     
-
 Array in heap
     int a[5]
     int *p;
     p = new int[5];
     this create the memory for the 5 integers in heap memory and can be accesed through the pointer.
+
+Delete heap memory of pointer after use
+    cpp->  delete []p;
+    c->  free(p);
 
