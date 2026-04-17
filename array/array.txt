@@ -11,4 +11,19 @@ Declaration of array
 
 Access of values stored in array
     COUT<<a[0]; PRINT value stored at array a at index 0;
+
+Static vs Dynamic array
+    Static array
+        if the size of array is predefined while compile time in c
+        size of array cannot be updated after decclaration
+
+    Dynamic array
+        the size of the array is defined while runtime
     
+
+Array in heap
+    int a[5]
+    int *p;
+    p = new int[5];
+    this create the memory for the 5 integers in heap memory and can be accesed through the pointer.
+
