@@ -7,11 +7,13 @@ struct array{
     int length;
 };
 
+int ar(array arr){
+    for(int i=0; i<arr.size; i++){
+        cout<<arr.a[i]<<endl;
+    }
+}
+
 int main(){
     struct array arr;
-    cout<<"enter size of array";
-    cin>>arr.size;
-    arr.a = new int[arr.size*sizeof(int)];
-    arr.length=0;
-    
+    arr.size=5;
 }
