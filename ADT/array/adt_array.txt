@@ -1,0 +1,11 @@
+Abstract data type array consist of varios operations 
+Display()
+Add()/Append()
+Insert()
+Delete()
+Search()
+Get()
+Set()
+Max()/Min()
+Reverse()
+Shift()/Rotate()
