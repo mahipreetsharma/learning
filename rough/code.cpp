@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include<bits/stdc++.h> //bits/stdc++ have all essential keywords
 using namespace std;
 
 //check the bit is set or unsset
