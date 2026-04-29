@@ -100,5 +100,18 @@ using namespace std;
 //     return 0;
 // }
 
-
+// void ch(string *a){ //String manipulation using pointer and function
+//     int n = (*a).length();
+//     for(int i = 1; i<n ; i++){
+//         if((*a)[i]>='a' && (*a)[i]<='z'){
+//             (*a)[i]-=32;
+//         }
+//     }
+// }
+// int main(){
+//     string name ;
+//     cin>>name;
+//     ch(&name);
+//     cout<<name;
+// }
 
