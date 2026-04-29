@@ -115,3 +115,21 @@ using namespace std;
 //     cout<<name;
 // }
 
+// int main(){
+//     vector<int> a;
+//     a.push_back(20);
+//     a.push_back(2);
+//     a.push_back(30);
+//     cout<<a[0]<<endl<<a[1]<<endl;
+//     return 0;
+// }
+
+/*
+Code Force
+LeetCode
+CodeChef
+AtCoder
+HackerRank
+SPOJ
+*/
+
