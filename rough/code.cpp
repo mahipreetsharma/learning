@@ -110,7 +110,7 @@ using namespace std;
 // }
 // int main(){
 //     string name ;
-//     cin>>name;
+//     cin>>name; 
 //     ch(&name);
 //     cout<<name;
 // }
@@ -131,5 +131,25 @@ CodeChef
 AtCoder
 HackerRank
 SPOJ
-*/
 
+time limit exceeded when the answer take more time to process 10^7 -- 10^8 operations per second
+
+*/
+// vector<int> spiral(vector<vector<int>> &matrix,int m, int n){
+    
+// }
+
+// int main(){
+//     vector<vector<int>> matrix ={{1,2,3},{4,5,6},{7,8,9}};
+//     int m = matrix.size();
+//     int n = matrix[0].size();
+//     spiral(matrix,m,n);
+//     for(int i=0; i<m; i++){
+//         for(int j=0;j<n;j++){
+//             cout<<matrix[i][j]<<" ";
+//         }
+//         cout<<endl;
+//     }
+// }
+
+//
