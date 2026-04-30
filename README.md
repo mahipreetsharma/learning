@@ -1,1 +1,1088 @@
-This Git repos will used to update my learning of DSA from scratch
+FUNCTIONS:
+
+In C++, a function is a self-contained block of code that performs a specific task. It allows you to break a program into smaller, reusable pieces.
+
+Key characteristics:
+Reusability - Write code once, use it many times
+Modularity - Break complex problems into simpler sub-tasks
+Organization - Makes code easier to read, debug, and maintain
+
+SYNTAX:
+
+return_type function_name(parameter1, parameter2, ...)
+{
+    // function body
+    // performs a task
+    return value; // optional
+}
+
+Example:
+// Function declaration (prototype)
+int add(int a, int b);
+
+// Function definition
+int add(int a, int b) {
+    return a + b;
+}
+
+// Using the function
+int result = add(5, 3);  // result = 8
+
+Function with void (no return):
+
+void greet(string name) {
+    cout << "Hello, " << name << "!" << endl;
+    // no return statement needed
+}
+
+greet("Alice");  // Prints: Hello, Alice!
+
+In C++, a **function** is a self-contained block of code that performs a specific task. It allows you to break a program into smaller, reusable pieces.
+
+## Key characteristics:
+
+1. **Reusability** - Write code once, use it many times
+2. **Modularity** - Break complex problems into simpler sub-tasks
+3. **Organization** - Makes code easier to read, debug, and maintain
+
+## Basic structure:
+
+```cpp
+return_type function_name(parameter_list) {
+    // function body
+    // code to perform the task
+    return value;  // if return_type is not void
+}
+```
+
+## Simple example:
+
+```cpp
+// Function declaration (prototype)
+int add(int a, int b);
+
+// Function definition
+int add(int a, int b) {
+    return a + b;
+}
+
+// Using the function
+int result = add(5, 3);  // result = 8
+```
+
+## Function with void (no return):
+
+```cpp
+void greet(string name) {
+    cout << "Hello, " << name << "!" << endl;
+    // no return statement needed
+}
+
+greet("Alice");  // Prints: Hello, Alice!
+```
+
+## Why use functions?
+
+- **Avoid code duplication** - Dont repeat the same logic
+- **Easier testing** - Test each function independently
+- **Abstraction** - Hide complex implementation details
+- **Team development** - Different programmers can work on different functions
+
+Arguments (also called Parameters)
+Arguments are values passed to a function so it can work with data. They allow functions to operate on different inputs each time they re called.
+
+Types of arguments in C++:
+
+1. Pass by value (default) - copies the data
+
+void multiply(int x, int y) {  // x and y are parameters
+    cout << x * y;
+}
+
+multiply(5, 3);  // 5 and 3 are arguments
+
+2. Pass by reference (&) - modifies original variable
+
+void doubleIt(int &num) {  // receives reference
+    num = num * 2;
+}
+
+int value = 10;
+doubleIt(value);  // value becomes 20
+
+3. Pass by pointer (*)
+
+void change(int *ptr) {
+    *ptr = 100;
+}
+
+int num = 5;
+change(&num);  // num becomes 100
+
+4. Default arguments
+
+void greet(string name = "Guest") {  // default value
+    cout << "Hello, " << name;
+}
+
+greet();        // Hello, Guest
+greet("John");  // Hello, John
+
+
+Return Types
+The return type specifies what kind of value a function sends back to the caller.
+
+Common return types:
+cpp
+int add(int a, int b) {
+    return a + b;  // returns integer
+}
+
+double divide(int a, int b) {
+    return (double)a / b;  // returns double
+}
+
+bool isEven(int num) {
+    return num % 2 == 0;  // returns true/false
+}
+
+char getGrade(int score) {
+    return 'A';  // returns single character
+}
+
+void printMessage() {
+    cout << "Hello";  // returns nothing (void)
+}
+Special return types:
+Reference return - returns a reference to existing variable
+
+cpp
+int& getElement(int arr[], int index) {
+    return arr[index];  // can be modified
+}
+
+
+Auto return type (C++14)
+
+cpp
+auto add(int a, int b) {
+    return a + b;  // automatically deduces int
+}
+
+Key rules:
+A function can only return one value
+void functions don t return anything
+Return type must match the return statement
+You can ignore the return value if you want
+Returned values can be stored in variables or used directly
+
+
+Function Overloading
+Function overloading allows you to define multiple functions with the same name but different parameters.
+
+Example:
+cpp
+// same name, different parameter types
+int add(int a, int b) { return a + b; }
+double add(double a, double b) { return a + b; }
+
+// same name, different number of parameters
+int add(int a, int b, int c) { return a + b + c; }
+
+// call
+add(5, 3);        // calls first function
+add(5.5, 3.2);    // calls second function
+add(1, 2, 3);     // calls third function
+
+
+1. Pass by Value
+Creates a copy of the argument
+Function works on the copy, not the original
+Original variable remains unchanged
+Memory usage: higher (creates duplicates)
+Safe: no side effects on original data
+
+2. Pass by Pointer
+Passes the memory address of the variable
+Function receives a pointer (address)
+Can modify original via dereferencing (*ptr)
+Can also accept nullptr
+Uses * in parameter and & when calling
+
+3. Pass by Reference
+Passes an alias (nickname) to the original variable
+Function works directly on original
+Cannot be null (must refer to valid variable)
+Cleaner syntax than pointers
+Introduced in C++ (not available in C)
+
+Feature	                Pass by Value	Pass by Pointer	Pass by Reference
+Syntax	                int x	            int *ptr	    int &ref
+Modifies original?      No	                Yes	            Yes
+Can be null?            N/A	                Yes	            No
+Copies data?            Yes	                No	            No
+Calling syntax          func(a)             func(&a)        func(a)
+Performance             Slow (large data)   Fast	        Fast
+
+#include <iostream>
+using namespace std;
+
+// Pass by Value - doesn t modify original
+void changeValue(int x) {
+    x = 100;
+    cout << "Inside changeValue: " << x << endl;
+}
+
+// Pass by Pointer - can modify original
+void changePointer(int *ptr) {
+    *ptr = 200;
+    cout << "Inside changePointer: " << *ptr << endl;
+}
+
+// Pass by Reference - can modify original
+void changeReference(int &ref) {
+    ref = 300;
+    cout << "Inside changeReference: " << ref << endl;
+}
+
+int main() {
+    int num = 10;
+    
+    changeValue(num);
+    cout << "After changeValue: " << num << endl;  // Still 10
+    
+    changePointer(&num);
+    cout << "After changePointer: " << num << endl;  // Now 200
+    
+    changeReference(num);
+    cout << "After changeReference: " << num << endl;  // Now 300
+    
+    return 0;
+}
+
+#include <iostream>
+using namespace std;
+
+// Pass by Value - WON T work (swaps copies only)
+void swapValue(int a, int b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+// Pass by Pointer - WORKS
+void swapPointer(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Pass by Reference - WORKS (cleanest)
+void swapReference(int &a, int &b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int main() {
+    int x = 5, y = 10;
+    
+    swapValue(x, y);
+    cout << "After swapValue: x=" << x << ", y=" << y << endl;  // 5,10
+    
+    swapPointer(&x, &y);
+    cout << "After swapPointer: x=" << x << ", y=" << y << endl;  // 10,5
+    
+    swapReference(x, y);
+    cout << "After swapReference: x=" << x << ", y=" << y << endl;  // 5,10
+    
+    return 0;
+}
+
+#include <iostream>
+using namespace std;
+
+// Pass by Pointer for array
+void doubleArray(int *arr, int size) {
+    for(int i = 0; i < size; i++) {
+        arr[i] *= 2;  // Same as *(arr + i) *= 2
+    }
+}
+
+// Pass by Reference for single element
+void tripleElement(int &element) {
+    element *= 3;
+}
+
+int main() {
+    int numbers[3] = {1, 2, 3};
+    
+    doubleArray(numbers, 3);
+    cout << "After doubling: ";
+    for(int i = 0; i < 3; i++) {
+        cout << numbers[i] << " ";  // 2, 4, 6
+    }
+    
+    tripleElement(numbers[1]);
+    cout << "\nAfter tripling index 1: " << numbers[1] << endl;  // 12
+    
+    return 0;
+}
+
+
+#include <iostream>
+using namespace std;
+
+// Using pointers to return multiple results
+void calculatePointer(int a, int b, int *sum, int *product) {
+    *sum = a + b;
+    *product = a * b;
+}
+
+// Using references (cleaner)
+void calculateReference(int a, int b, int &sum, int &product) {
+    sum = a + b;
+    product = a * b;
+}
+
+int main() {
+    int s1, p1, s2, p2;
+    
+    // Pointer version
+    calculatePointer(5, 3, &s1, &p1);
+    cout << "Pointer method - Sum: " << s1 << ", Product: " << p1 << endl;
+    
+    // Reference version
+    calculateReference(5, 3, s2, p2);
+    cout << "Reference method - Sum: " << s2 << ", Product: " << p2 << endl;
+    
+    return 0;
+}
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Pass by Value (doesn t modify original)
+void makeUpperValue(string str) {
+    for(char &c : str) {
+        c = toupper(c);
+    }
+}
+
+// Pass by Reference (modifies original)
+void makeUpperReference(string &str) {
+    for(char &c : str) {
+        c = toupper(c);
+    }
+}
+
+// Pass by Pointer (modifies original)
+void makeUpperPointer(string *str) {
+    for(char &c : *str) {
+        c = toupper(c);
+    }
+}
+
+int main() {
+    string text = "hello";
+    
+    makeUpperValue(text);
+    cout << "After Value: " << text << endl;  // hello (unchanged)
+    
+    makeUpperReference(text);
+    cout << "After Reference: " << text << endl;  // HELLO
+    
+    text = "world";
+    makeUpperPointer(&text);
+    cout << "After Pointer: " << text << endl;  // WORLD
+    
+    return 0;
+}
+
+#include <iostream>
+using namespace std;
+
+// Using both pointer and reference
+void findMinMax(int arr[], int size, int *min, int &max) {
+    *min = arr[0];
+    max = arr[0];
+    
+    for(int i = 1; i < size; i++) {
+        if(arr[i] < *min) *min = arr[i];
+        if(arr[i] > max) max = arr[i];
+    }
+}
+
+int main() {
+    int numbers[] = {15, 3, 8, 22, 1, 9};
+    int minimum, maximum;
+    
+    findMinMax(numbers, 6, &minimum, maximum);
+    
+    cout << "Array: ";
+    for(int x : numbers) cout << x << " ";
+    cout << "\nMinimum: " << minimum << endl;
+    cout << "Maximum: " << maximum << endl;
+    
+    return 0;
+}
+
+Dynamic vs Static array:
+
+Size doubling concept.
+
+
+#include <iostream>
+using namespace std;
+
+// Use pass by value: small, simple data that shouldn t change
+int square(int x) {
+    return x * x;  // Original not needed to change
+}
+
+// Use reference: large data or need to modify
+void updateScore(int &score, int bonus) {
+    score += bonus;  // Modify original directly
+}
+
+// Use pointer: optional parameters or C compatibility
+void configure(int *setting) {
+    if(setting != nullptr) {
+        *setting = 100;
+    }
+}
+
+// Use const reference: large data but read-only
+void displayInfo(const string &info) {
+    cout << "Info: " << info << endl;  // No copy, but can t modify
+}
+
+int main() {
+    // Pass by value
+    int num = 5;
+    int result = square(num);
+    cout << "Square: " << result << ", Original: " << num << endl;
+    
+    // Pass by reference
+    int score = 50;
+    updateScore(score, 30);
+    cout << "Updated score: " << score << endl;
+    
+    // Pass by pointer (optional)
+    int setting = 10;
+    configure(&setting);
+    cout << "Configured: " << setting << endl;
+    configure(nullptr);  // Valid call
+    
+    // Const reference
+    string message = "Hello World";
+    displayInfo(message);  // No copying of string
+    
+    return 0;
+}
+
+
+Competitive Programming Platforms & Common Errors
+
+WHAT IS A COMPETITIVE PLATFORM?
+
+A competitive programming platform is an online judge system where you solve algorithmic problems by writing code that passes predefined test cases. Examples include:
+
+Codeforces (most popular for contests)
+LeetCode (interview preparation)
+CodeChef (monthly long challenges)
+AtCoder (Japanese platform)
+HackerRank (skill-based challenges)
+SPOJ (classic problems)
+
+How it works:
+You write solution in C++/Python/Java
+Platform compiles and runs your code
+Tests against hidden test cases
+Returns verdict (AC, WA, TLE, etc.)
+
+
+How many instructions per second?
+
+Operation Type		                    Approximate speed (1 sec)
+Simple arithmetic ( +, -, *, /)	            ~3-5 × 10⁸ operations
+Integer operations	                        ~2-3 × 10⁸
+Array access	                            ~1-2 × 10⁸
+Sorting (n log n)	                        ~10⁷-10⁸ comparisons
+String operations	                        ~10⁷-10⁸ characters
+Recursion calls	                            ~10⁷ function calls
+STL operations	                            ~10⁷-10⁸ operations
+
+
+Common Verdicts (and what they mean)
+
+AC: Accepted - Your code passed ALL test cases 
+WA: Wrong Answer - Your output doesn t match expected 
+TLE: Time Limit Exceeded - Code too slow 
+MLE: Memory Limit Exceeded - Used too much memory 
+RE: Runtime Error - Crash during execution 
+CE: Compile Error - Syntax error, can t compile 
+
+
+O(1)        - ~10⁸ operations (always fast)
+O(log n)    - n can be 10¹⁸ (binary search)
+O(√n)       - n up to 10¹²
+O(n)        - n up to 10⁷-10⁸
+O(n log n)  - n up to 10⁶-10⁷
+O(n²)       - n up to 10⁴-10⁵
+O(n³)       - n up to 500-1000
+O(2ⁿ)       - n up to 20-25
+O(n!)       - n up to 10-12
+
+Example: Calculate iterations in 1 second
+cpp
+// This runs in ~1 second (10⁸ operations)
+int count = 0;
+for(int i = 0; i < 100000000; i++) {
+    count++;  // 100 million iterations
+}
+
+// This runs in ~0.1 seconds
+for(int i = 0; i < 10000000; i++) {
+    // 10 million iterations
+}
+
+// This will TLE (~10 seconds)
+for(int i = 0; i < 1000000000; i++) {
+    // 1 billion iterations - TOO SLOW
+}
+
+COMMON VERDICTS & ERRORS
+1. AC (Accepted) 
+Your solution passed all test cases correctly.
+
+2. WA (Wrong Answer)
+Your output doesn t match expected output.
+
+Probable causes:
+Logic error in algorithm
+Off-by-one errors in loops
+Wrong data type (int vs long long)
+Not handling edge cases (empty input, n=0, n=1)
+Integer overflow
+
+cpp
+// Example: WRONG - overflow
+int sum = 0;
+for(int i = 0; i < 100000; i++) {
+    sum += i * i;  // Might overflow int (2^31-1)
+}
+
+// CORRECT - use long long
+long long sum = 0;
+
+3. TLE (Time Limit Exceeded)
+
+Code takes too long (typically >1-2 seconds).
+Probable causes:
+Inefficient algorithm (O(n²) instead of O(n log n))
+Infinite loop
+Unnecessary nested loops
+Recursion too deep
+Using heavy STL operations unnecessarily
+
+cpp
+// Example: WILL TLE for n=200000 (O(n²))
+vector<int> arr(n);
+for(int i = 0; i < n; i++) {
+    for(int j = i+1; j < n; j++) {
+        if(arr[i] == arr[j]) count++;
+    }
+}
+
+// FIX: Use hash map - O(n)
+unordered_map<int, int> freq;
+for(int x : arr) freq[x]++;
+
+4. MLE (Memory Limit Exceeded)
+Your code used too much memory (typically >256MB-512MB).
+
+Probable causes:
+
+Declaring huge arrays (n > 10^6)
+
+Creating unnecessary data structures
+
+Not clearing vectors/matrices
+
+Deep recursion causing stack overflow
+
+Storing too many strings
+
+cpp
+// Example: WILL CAUSE MLE for n=10^7
+vector<int> largeArray(10000000);  // 40MB - OK
+vector<int> veryLargeArray(100000000);  // 400MB - MLE!
+
+// FIX: Use dynamic allocation or process in chunks
+// Or use approach that doesn t store everything
+
+int           = 4 bytes
+long long     = 8 bytes
+char          = 1 byte
+bool          = 1 byte
+pointer (64-bit) = 8 bytes
+vector overhead = 24 bytes
+
+1 million ints = 4 MB
+10 million ints = 40 MB
+100 million ints = 400 MB (typical MLE)
+
+5. Runtime Error (RE) 💥
+Program crashes during execution.
+Common causes with examples:
+
+a) Segmentation Fault (SIGSEGV) - Accessing invalid memory
+
+cpp
+// 1. Array index out of bounds
+int arr[10];
+arr[100] = 5;  // SEGFAULT
+
+// 2. Null pointer dereference
+int *ptr = nullptr;
+*ptr = 10;  // SEGFAULT
+
+// 3. Stack overflow (too deep recursion)
+void infiniteRecurse() {
+    infiniteRecurse();  // Stack overflow
+}
+
+// 4. Accessing deleted memory
+int *ptr = new int(5);
+delete ptr;
+*ptr = 10;  // SEGFAULT
+
+// 5. Vector out of bounds (with at() throws, but [] may segfault)
+vector<int> v(5);
+v[100] = 10;  // Undefined behavior - may segfault
+
+b) Floating Point Exception (SIGFPE)
+// Division by zero
+int a = 10, b = 0;
+int c = a / b;  // FPE
+
+// Modulo by zero
+int x = 10 % 0;  // FPE
+
+c) Stack Overflow
+// Too deep recursion
+int fib(int n) {
+    if(n <= 1) return n;
+    return fib(n-1) + fib(n-2);  // Depth = n
+}
+fib(100000);  // Stack overflow (max ~1e5 depth)
+
+// Huge local array
+void func() {
+    int arr[10000000];  // 40MB on stack - overflow!
+}
+
+
+C++ STL (Standard Template Library) & Range-Based Loops
+
+PART 1: STL (STANDARD TEMPLATE LIBRARY)
+STL is a powerful library of template classes and functions that provide common data structures and algorithms. It consists of 4 main components:
+
+Components Overview:
+text
+STL
+├── Containers (Store data)
+├── Algorithms (Process data)
+├── Iterators (Access data)
+└── Functors (Function objects)
+
+1. CONTAINERS
+A. Sequence Containers (Linear arrangement)
+vector - Dynamic array
+cpp
+#include <vector>
+vector<int> v;
+
+// Basic operations
+v.push_back(10);     // Add at end: {10}
+v.push_back(20);     // {10, 20}
+v.pop_back();        // Remove last: {10}
+v.size();            // Number of elements
+v.empty();           // Check if empty
+v[0];                // Access element (no bounds check)
+v.at(0);             // Access with bounds check
+v.insert(v.begin(), 5);  // Insert at beginning: {5, 10}
+v.erase(v.begin());       // Erase first element
+v.clear();                // Remove all
+
+// Example
+vector<int> nums = {1, 2, 3, 4, 5};
+for(int i = 0; i < nums.size(); i++) {
+    cout << nums[i] << " ";
+}
+
+deque - Double-ended queue
+cpp
+#include <deque>
+deque<int> dq;
+dq.push_front(10);    // {10}
+dq.push_back(20);     // {10, 20}
+dq.push_front(5);     // {5, 10, 20}
+dq.pop_front();       // {10, 20}
+dq.pop_back();        // {10}
+
+B. Associative Containers (Sorted, O(log n) access)
+set - Unique sorted elements
+cpp
+#include <set>
+set<int> s;
+s.insert(5);     // {5}
+s.insert(3);     // {3, 5}
+s.insert(5);     // {3, 5} (no duplicate)
+s.insert(7);     // {3, 5, 7}
+
+// Searching
+if(s.find(5) != s.end()) {
+    cout << "Found";
+}
+
+s.erase(5);      // {3, 7}
+s.lower_bound(4); // Iterator to first element >= 4
+s.upper_bound(6); // Iterator to first element > 6
+map - Key-value pairs (sorted by key)
+cpp
+#include <map>
+map<string, int> m;
+m["apple"] = 5;
+m["banana"] = 3;
+m["orange"] = 7;
+// 12,13,17,19,25,36
+// Different ways to insert
+m.insert({"grape", 4});
+m.insert(pair<string,int>("kiwi", 6));
+m.emplace("mango", 8);
+
+// Access
+cout << m["apple"];     // 5
+cout << m["pear"];      // 0 (inserts with 0)
+
+// Check existence
+if(m.count("apple") > 0) {
+    cout << "Exists";
+}
+
+// Iterate
+for(auto& p : m) {
+    cout << p.first << ": " << p.second << endl;
+}
+multiset / multimap - Allow duplicates
+cpp
+multiset<int> ms;
+ms.insert(5);
+ms.insert(5);  // {5, 5}
+ms.count(5);   // Returns 2
+
+
+C. Unordered Containers (Hash-based, O(1) average)
+unordered_set - Like set but unsorted, faster
+cpp
+#include <unordered_set>
+unordered_set<int> us;
+us.insert(5);
+us.insert(3);
+us.insert(7);
+// Order could be {7, 3, 5} (no guaranteed order)
+
+// O(1) average operations
+us.find(5);   // Fast
+unordered_map - Like map but unsorted
+cpp
+#include <unordered_map>
+unordered_map<string, int> um;
+um["apple"] = 5;
+um["banana"] = 3;
+// O(1) average for insertion and lookup
+
+D. Container Adapters (Special interfaces)
+stack - LIFO (Last In, First Out)
+cpp
+#include <stack>
+stack<int> st;
+st.push(10);
+st.push(20);
+st.top();    // 20
+st.pop();    // Removes 20
+st.empty();
+queue - FIFO (First In, First Out)
+cpp
+#include <queue>
+queue<int> q;
+q.push(10);
+q.push(20);
+q.front();   // 10
+q.back();    // 20
+q.pop();     // Removes 10
+
+2. ITERATORS
+
+Iterators are like pointers that help traverse containers.
+
+Types of Iterators:
+cpp
+vector<int> v = {10, 20, 30, 40, 50};
+
+// 1. begin() - points to first element
+auto it = v.begin();
+cout << *it;  // 10
+
+// 2. end() - points AFTER last element
+it = v.end();
+it--;  // Now points to last element
+cout << *it;  // 50
+
+// 3. Traversing with iterators
+for(auto it = v.begin(); it != v.end(); it++) {
+    cout << *it << " ";
+}
+
+// 4. Reverse iterators
+for(auto it = v.rbegin(); it != v.rend(); it++) {
+    cout << *it << " ";  // 50, 40, 30, 20, 10
+}
+
+3. ALGORITHMS
+
+#include <algorithm>
+Sorting:
+vector<int> v = {5, 2, 8, 1, 9};
+
+// Basic sort - ascending
+sort(v.begin(), v.end());  // {1, 2, 5, 8, 9}
+
+// Sort array
+int arr[] = {5, 2, 8, 1, 9};
+sort(arr, arr + 5);
+Searching:
+cpp
+vector<int> v = {1, 2, 3, 4, 5};
+
+// Binary search (container must be sorted)
+bool found = binary_search(v.begin(), v.end(), 3);  // true
+
+// Lower bound (first element >= value)
+auto it = lower_bound(v.begin(), v.end(), 3);
+cout << *it;  // 3
+
+// Upper bound (first element > value)
+it = upper_bound(v.begin(), v.end(), 3);
+cout << *it;  // 4
+
+// Find (linear search)
+it = find(v.begin(), v.end(), 4);
+if(it != v.end()) {
+    cout << "Found at index: " << (it - v.begin());
+}
+
+
+4. RANGE-BASED FOR LOOPS (C++11)
+
+Basic Syntax:
+
+for (declaration : range) {
+    // body
+}
+Examples:
+
+// 1. Arrays
+int arr[] = {1, 2, 3, 4, 5};
+for(int x : arr) {
+    cout << x << " ";  // 1 2 3 4 5
+}
+
+// 2. Vector
+vector<int> v = {10, 20, 30};
+for(int val : v) {
+    cout << val << " ";  // 10 20 30
+}
+
+// 3. String
+string s = "Hello";
+for(char c : s) {
+    cout << c << " ";  // H e l l o
+}
+
+// 4. Initializer list
+for(int x : {1, 2, 3, 4, 5}) {
+    cout << x;
+}
+
+// 5. Map (key-value pairs)
+map<string, int> m = {{"A", 1}, {"B", 2}};
+for(auto& p : m) {
+    cout << p.first << ":" << p.second << endl;
+}
+
+// 6. Set
+set<int> s = {5, 2, 8, 1};
+for(int x : s) {
+    cout << x << " ";  // 1 2 5 8 (sorted)
+}
+Modifying Elements:
+cpp
+vector<int> v = {1, 2, 3, 4, 5};
+
+// Reading only (copy)
+for(int x : v) {
+    x *= 2;  // Doesn t affect original
+}
+// v is still {1, 2, 3, 4, 5}
+
+// Modifying (reference)
+for(int& x : v) {
+    x *= 2;  // Now modifies original
+}
+// v becomes {2, 4, 6, 8, 10}
+
+Range-based for vs Traditional for:
+
+vector<int> v = {10, 20, 30, 40, 50};
+
+// Traditional for loop
+for(int i = 0; i < v.size(); i++) {
+    cout << v[i] << " ";
+}
+
+// Iterator for loop
+for(auto it = v.begin(); it != v.end(); it++) {
+    cout << *it << " ";
+}
+
+// Range-based for loop (CLEANEST)
+for(int x : v) {
+    cout << x << " ";
+}
+
+
+Limitations & Workarounds:
+cpp
+// Can t get index directly
+for(int x : v) {
+    // Need index? Use traditional loop or maintain counter
+    int i = 0;
+    cout << i++ << ": " << x;
+}
+
+// Can t modify container while iterating
+for(int x : v) {
+    if(x == 30) v.push_back(60);  // BAD! Iterator invalidation
+}
+
+// Nested range-based loops
+vector<vector<int>> matrix = {{1, 2}, {3, 4}};
+for(auto& row : matrix) {
+    for(int val : row) {
+        cout << val << " ";  // 1 2 3 4
+    }
+}
+
+Example 1: Using map for frequency count
+
+string s = "hello world";
+map<char, int> freq;
+
+for(char c : s) {
+    if(c != ' ') {
+        freq[c]++;
+    }
+}
+
+for(auto& [ch, count] : freq) {  // C++17 structured binding
+    cout << ch << ": " << count << endl;
+}
+
+
+PROBLEM 1: SPIRAL MATRIX (LeetCode 54)
+Problem Statement
+Given an m x n matrix, return all elements of the matrix in spiral order (clockwise from outside in).
+
+Example:
+
+Input: matrix = [[1, 2, 3],
+                 [4, 5, 6],
+                 [7, 8, 9]]
+
+Output: [1, 2, 3, 6, 9, 8, 7, 4, 5]
+
+Visual:
+→   →   →  
+[1, 2, 3]  ↓
+[4, 5, 6]  ↓
+[7, 8, 9]  ←   ←
+
+Start at (0,0): 1→2→3↓6↓9←8←7↑4→5
+
+
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        vector<int> result;
+        if(matrix.empty()) return result;
+        
+        int top = 0;
+        int bottom = matrix.size() - 1;
+        int left = 0;
+        int right = matrix[0].size() - 1;
+        
+        while(top <= bottom && left <= right) {
+            // 1. Traverse from left to right along the top row
+            for(int col = left; col <= right; col++) {
+                result.push_back(matrix[top][col]);
+            }
+            top++; // Move top boundary down
+            
+            // 2. Traverse from top to bottom along the right column
+            for(int row = top; row <= bottom; row++) {
+                result.push_back(matrix[row][right]);
+            }
+            right--; // Move right boundary left
+            
+            // 3. Traverse from right to left along the bottom row (if still rows left)
+            if(top <= bottom) {
+                for(int col = right; col >= left; col--) {
+                    result.push_back(matrix[bottom][col]);
+                }
+                bottom--; // Move bottom boundary up
+            }
+            
+            // 4. Traverse from bottom to top along the left column (if still columns left)
+            if(left <= right) {
+                for(int row = bottom; row >= top; row--) {
+                    result.push_back(matrix[row][left]);
+                }
+                left++; // Move left boundary right
+            }
+        }
+        
+        return result;
+    }
+};
+
+Step-by-step walkthrough for 3x3 matrix:
+
+
+Initial: top=0, bottom=2, left=0, right=2
+
+Step 1 (top row): [1,2,3] → top=1
+Step 2 (right col): [6,9] → right=1
+Step 3 (bottom row): [8,7] → bottom=1
+Step 4 (left col): [4] → left=1
+
+Now top=1, bottom=1, left=1, right=1
+Step 1 (top row): [5] → top=2
+Loop ends (top=2 > bottom=1)
+Result: [1,2,3,6,9,8,7,4,5]
+Time Complexity: O(m × n) - visit each element once
+Space Complexity: O(1) - excluding output array
