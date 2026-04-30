@@ -157,3 +157,96 @@ time limit exceeded when the answer take more time to process 10^7 -- 10^8 opera
 //ordered set
 //
 
+// int main(){
+//     int b[5]={11,22,33,44,55};
+//     cout<<b<<endl;
+//     cout<<&b[0]<<endl;
+//     cout<<b[1];
+//     cout<<*(b+1);
+//     return 0;
+// }
+
+// class Solution {
+// public:
+//     vector<vector<int>> generateMatrix(int n) {
+//         int t=0;
+//         int b=n-1;
+//         int l=0;
+//         int r=n-1;
+//         int num = 0;
+//         vector<vector<int>> re;
+//         if(n<=1){re[0][0]=1;return re;}else{
+//         while(num<n*n){
+//         for(int i=l;i<=r&&num<n*n;i++){
+//             num++;
+//             re[t][i]=num;
+//         }
+//         t++;
+//         for(int i=t; i<=b&&num<n*n;i++){
+//             num++;
+//             re[i][r]=num;
+//         }
+//         r--;
+//         for(int i=r; i>=l&&num<n*n; i--){
+//             num++;
+//             re[b][i]=num;
+//         }
+//         b--;
+//         for(int i=b;i>=t&num<n*n;i--){
+//             num++;
+//             re[i][l]=num;
+//         }
+//         l++;
+//         }
+//         return re;
+//         }
+//     }
+// };
+// int main(){
+//     int a = 1;
+//     vector<vector<int>> result = generateMatrix(3);
+//     return 0;
+// }
+
+// int main(){
+//     int n ;
+//     cin>>n;
+//     string s = to_string(n);
+//     int b = s.length();
+//     for(int i=0; i<b/2;i++){
+//         if(s[i]==s[b-i-1]){
+//             cout<<"Palindrome";
+//             break;
+//         }else{
+//             cout<<"Not Palindrome";
+//             break;
+//         }
+//     }
+//     return 0;
+// }
+
+/*
+5 3
+4 2
+3 1
+2 3
+1 2
+0 1
+*/
+
+// int main(){
+//     for(int i=5; i>=0;i--){
+//         if(i>2){
+//             cout<<i<<"\t"<<i-2;
+//         }else{
+//             cout<<i<<"\t"<<i+1;
+//         }
+//         cout<<endl;
+//     }
+//}
+
+int main(){
+    vector<int> x = {1,2,3,4};
+    cout<<x.size();
+    return 0;
+}
