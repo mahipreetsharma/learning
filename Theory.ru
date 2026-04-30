@@ -83,13 +83,13 @@ greet("Alice");  // Prints: Hello, Alice!
 
 ## Why use functions?
 
-- **Avoid code duplication** - Don't repeat the same logic
+- **Avoid code duplication** - Dont repeat the same logic
 - **Easier testing** - Test each function independently
 - **Abstraction** - Hide complex implementation details
 - **Team development** - Different programmers can work on different functions
 
 Arguments (also called Parameters)
-Arguments are values passed to a function so it can work with data. They allow functions to operate on different inputs each time they're called.
+Arguments are values passed to a function so it can work with data. They allow functions to operate on different inputs each time they re called.
 
 Types of arguments in C++:
 
@@ -171,7 +171,7 @@ auto add(int a, int b) {
 
 Key rules:
 A function can only return one value
-void functions don't return anything
+void functions don t return anything
 Return type must match the return statement
 You can ignore the return value if you want
 Returned values can be stored in variables or used directly
@@ -227,7 +227,7 @@ Performance             Slow (large data)   Fast	        Fast
 #include <iostream>
 using namespace std;
 
-// Pass by Value - doesn't modify original
+// Pass by Value - doesn t modify original
 void changeValue(int x) {
     x = 100;
     cout << "Inside changeValue: " << x << endl;
@@ -263,7 +263,7 @@ int main() {
 #include <iostream>
 using namespace std;
 
-// Pass by Value - WON'T work (swaps copies only)
+// Pass by Value - WON T work (swaps copies only)
 void swapValue(int a, int b) {
     int temp = a;
     a = b;
@@ -364,7 +364,7 @@ int main() {
 #include <string>
 using namespace std;
 
-// Pass by Value (doesn't modify original)
+// Pass by Value (doesn t modify original)
 void makeUpperValue(string str) {
     for(char &c : str) {
         c = toupper(c);
@@ -437,7 +437,7 @@ Size doubling concept.
 #include <iostream>
 using namespace std;
 
-// Use pass by value: small, simple data that shouldn't change
+// Use pass by value: small, simple data that shouldn t change
 int square(int x) {
     return x * x;  // Original not needed to change
 }
@@ -456,7 +456,7 @@ void configure(int *setting) {
 
 // Use const reference: large data but read-only
 void displayInfo(const string &info) {
-    cout << "Info: " << info << endl;  // No copy, but can't modify
+    cout << "Info: " << info << endl;  // No copy, but can t modify
 }
 
 int main() {
@@ -519,11 +519,11 @@ STL operations	                            ~10⁷-10⁸ operations
 Common Verdicts (and what they mean)
 
 AC: Accepted - Your code passed ALL test cases 
-WA: Wrong Answer - Your output doesn't match expected 
+WA: Wrong Answer - Your output doesn t match expected 
 TLE: Time Limit Exceeded - Code too slow 
 MLE: Memory Limit Exceeded - Used too much memory 
 RE: Runtime Error - Crash during execution 
-CE: Compile Error - Syntax error, can't compile 
+CE: Compile Error - Syntax error, can t compile 
 
 
 O(1)        - ~10⁸ operations (always fast)
@@ -559,7 +559,7 @@ COMMON VERDICTS & ERRORS
 Your solution passed all test cases correctly.
 
 2. WA (Wrong Answer)
-Your output doesn't match expected output.
+Your output doesn t match expected output.
 
 Probable causes:
 Logic error in algorithm
@@ -622,7 +622,7 @@ vector<int> largeArray(10000000);  // 40MB - OK
 vector<int> veryLargeArray(100000000);  // 400MB - MLE!
 
 // FIX: Use dynamic allocation or process in chunks
-// Or use approach that doesn't store everything
+// Or use approach that doesn t store everything
 
 int           = 4 bytes
 long long     = 8 bytes
@@ -936,7 +936,7 @@ vector<int> v = {1, 2, 3, 4, 5};
 
 // Reading only (copy)
 for(int x : v) {
-    x *= 2;  // Doesn't affect original
+    x *= 2;  // Doesn t affect original
 }
 // v is still {1, 2, 3, 4, 5}
 
@@ -968,14 +968,14 @@ for(int x : v) {
 
 Limitations & Workarounds:
 cpp
-// Can't get index directly
+// Can t get index directly
 for(int x : v) {
     // Need index? Use traditional loop or maintain counter
     int i = 0;
     cout << i++ << ": " << x;
 }
 
-// Can't modify container while iterating
+// Can t modify container while iterating
 for(int x : v) {
     if(x == 30) v.push_back(60);  // BAD! Iterator invalidation
 }
