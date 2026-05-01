@@ -1,0 +1,124 @@
+Functions in C++
+Definition: A block of code that performs a specific task.
+
+Syntax:
+returnType functionName(parameters) {
+    // body
+}
+
+Example:
+int add(int a, int b) { return a + b; }
+Nuance: If no return value, use void. Always declare before use or use prototypes.
+
+2. Function Overloading
+Multiple functions with the same name but different parameters (type, number, or order).
+
+Example:
+void print(int i) { cout << "Int: " << i; }
+void print(double d) { cout << "Double: " << d; }
+void print(string s) { cout << "String: " << s; }
+
+3. Loops & Nesting
+for, while, do-while.
+
+Nested loop: Loop inside another loop.
+
+for(int i=0; i<3; i++) {
+    for(int j=0; j<3; j++) {
+        cout << i << "," << j << " ";
+    }
+    cout << endl;
+}
+
+4. Conditional Statements
+if, if-else, if-else-if-else
+
+if(score >= 90) grade = 'A';
+else if(score >= 75) grade = 'B';
+else grade = 'C';
+
+5. STL - Vector
+Dynamic array.
+
+Common methods: push_back(), pop_back(), size(), at(), [], begin(), end().
+
+2D vector:
+
+vector<vector<int>> mat(3, vector<int>(4, 0)); // 3x4 zero matrix
+mat[0][1] = 5;
+6. STL - Set
+Stores unique elements in sorted order.
+
+set<int> s = {3,1,4,1,5}; // becomes {1,3,4,5}
+s.insert(2);
+s.erase(3);
+7. STL - Map
+Key-value pairs, sorted by key (unique keys).
+
+map<string, int> m;
+m["apple"] = 5;
+m["banana"] = 2;
+for(auto &p : m) cout << p.first << ":" << p.second << endl;
+
+8. Strings in C++
+#include <string>
+
+Methods: size(), append(), find(), substr(), [] access.
+
+string s = "Hello";
+s[0] = 'h'; // "hello"
+9. 2D Arrays (C-style)
+
+Fixed size static array.
+
+int arr[3][2] = {{1,2},{3,4},{5,6}};
+arr[1][0] = 99; // changes row2 col1
+
+Nuances & Common Mistakes
+
+Topic                               Nuance
+Overloading                         Cannot differ only by return type – must differ in parameters.
+Vector vs Array                     Vector knows its size, array (C-style) does not. Prefer vector unless fixed small size.
+Set insertion                       If you insert duplicate, it’s ignored (no error).
+Map []                              If key not present, m[key] creates default value (0 for int).
+2D vector initialization	        vector<vector<int>> v(rows, vector<int>(cols, initial_value));
+Loop conditions	                    Off-by-one errors common – test with small values.
+String vs char array	            Use std::string over char[] unless specific need.
+Nested loops	                    Watch variable names – don’t reuse same loop counter.
+
+4 Easy Practice Questions (Directly Applicable)
+
+Q1. Write a function maxOfTwo(int a, int b) returning the larger number. Test with user input.
+
+Q2. Use a loop to print numbers from 1 to 10, but if the number is divisible by 3, print “Fizz” instead.
+
+Q3. Given vector<string> names = {"Alice", "Bob", "Charlie"}, use a range-based for loop to print each name.
+
+Q4. Create a map<string, int> of 3 fruits and their prices. Write a function that returns the price of a given fruit name.
+
+Example Solutions for Quick Reference
+
+Example 1 (overloading):
+#include <iostream>
+using namespace std;
+int area(int side) { return side*side; } // square
+int area(int l, int b) { return l*b; }   // rectangle
+float area(float r) { return 3.14*r*r; } // circle
+
+Example 2 (remove duplicates with set):
+vector<int> v = {2,5,2,8,5};
+set<int> s(v.begin(), v.end());
+vector<int> uniqueVec(s.begin(), s.end());
+
+Example 3 (2D vector):
+vector<vector<int>> mat = {{1,2,3},{4,5,6}};
+int sum = 0;
+for(auto row : mat)
+    for(auto val : row)
+        sum += val;
+cout << "Total: " << sum;
+
+Example 4 (map frequency):
+vector<string> words = {"cat","dog","cat","bird","dog","cat"};
+map<string,int> freq;
+for(string w : words) freq[w]++; // increment count

@@ -1,0 +1,42 @@
+20 C++ Questions (Topics: functions, overloading, loops, nesting, STL vectors/maps/sets, 2D vectors, strings, 2D arrays, if/else-if/else)
+
+1. Write a function isEven(int n) that returns true if a number is even, else false. Use it in a loop to print even numbers from 1 to 20.
+
+2. Overload a function area() to compute area of a circle (radius), rectangle (length, breadth), and square (side).
+
+3. Write a nested loop to print a 5×5 matrix where matrix[i][j] = i + j.
+
+4. Given a vector<int> v = {2, 5, 2, 8, 5, 10}, write code to remove duplicates using set.
+
+5. Count frequency of each word in a vector<string> using map<string, int>.
+
+6. Reverse a string without using reverse() function (use loops and swap).
+
+7. Given a 2D vector vector<vector<int>> matrix = {{1,2,3},{4,5,6},{7,8,9}}, print the sum of each row.
+
+8. Write a function isPrime(int n) and use it to print all primes between 10 and 50.
+
+9. Overload a function print() to print int, double, and string differently.
+
+10. Using if-else if-else, write a program that takes a student's percentage and prints grade:
+≥90 → A, ≥75 → B, ≥60 → C, ≥40 → D, else F.
+
+11. Find the largest element in a 2D array int arr[3][4] using nested loops.
+
+12. Write a function that takes a vector<int> and returns a new vector with only even numbers.
+
+13. Given two sets set<int> s1 = {1,2,3,4}, s2 = {3,4,5,6}, find their union and intersection.
+
+14. Count vowels in a string using a loop and if-else.
+
+15. Write a function sumOfPositives(vector<int>) that returns sum of all positive numbers using a range-based for loop.
+
+16. From a map<string, int>, find the key with the maximum value.
+
+17. Write a function startsWithA(vector<string>) that returns a new vector of strings that start with 'A' or 'a'.
+
+18. Perform scalar multiplication on a 2D vector (multiply each element by a constant).
+
+19. Use nesting of loops and conditionals to print a star pattern (right-angled triangle) of height n.
+
+20. Given vector<vector<int>>, write a function that returns true if all rows are sorted in ascending order.
