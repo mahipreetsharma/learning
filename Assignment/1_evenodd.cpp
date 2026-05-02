@@ -11,9 +11,9 @@ bool evenodd(int n){
 
 int main(){
     int a;
-    cout<<"Enter a number to check even or odd :";
-    cin>>a;
+    for(int i=1; i<=20; i++){
     string s = (evenodd(a)==1)?"True":"False";
-    cout<<s;
+    cout<<i<<" "<<s<<endl;
+    }
     return 0;
 }
