@@ -1,8 +1,6 @@
-a = [1,2,3,5]
-s = "Mahipreet@Gmail.Com"
-s = s.lower()
-s = s.split('@')
-s[1]=s[1].split('.')
-s = s[0]+(s[1][0]+s[1][1])
-
-print(s)
+n = 13
+flag = True
+for i in range(2, n+1):
+    if (n%i==0):
+if flag == True : print("Prime")
+else : print("Not Prime")

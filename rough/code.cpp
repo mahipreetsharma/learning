@@ -246,9 +246,6 @@ time limit exceeded when the answer take more time to process 10^7 -- 10^8 opera
 //}
 
 int main(){
-    int n = 5;
-    for(int i = 0; i<n/2; i++){
-        cout<<n-i-1<<endl;
-    }
+    cout<<1%2;
     return 0;
 }
