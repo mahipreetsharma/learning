@@ -42,5 +42,4 @@ int main(){
     b.deposit(500);
     a.deposit(600);
 
-    a.withdraw();
 }   
