@@ -1,8 +1,42 @@
-#include<iostream>
-#include<vector>
+#include<bits/stdc++.h>
 using namespace std;
 
+class rec{
+    private:
+    int width;
+    int hight;
+
+    public:
+    rec(int w, int h){
+        width = w;
+        hight = h;
+    }
+
+    int area(){
+        return width*hight;
+    }
+
+    int par(){
+        return 2*(width*hight);
+    }
+
+    string isSquare(){
+        if(width == hight){
+            return "true";
+        }else{
+            return "false";
+        }
+    }
+};
+
 int main(){
-    vector<int> x = {1,2,3,4,5,6,7};
-    return 0;
+    rec r1(12,3);
+    cout<<r1.area()<<endl;
+
+    rec r2(4,10);
+    cout<<r2.isSquare()<<endl;
+    cout<<r2.par()<<endl;
+
+    rec r3(15,15);
+    cout<<r3.isSquare();
 }
