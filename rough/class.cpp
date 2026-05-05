@@ -1,45 +1,23 @@
-#include<bits/stdc++.h>
+#include<iostream>
+#include<string>
+#include<vector>
+
 using namespace std;
 
-class counter{
-    private:
-    int count;
+void swap(int &a, int &b) {
+	int temp = a;
+	a = b;
+	b = temp;
+}
 
-    public:
-    counter(int n){
-        count = n;
-    }
+int main() {
+	vector<int> ar = { 0,1,2,3,4,5,6,7,8,9 };
+	int n = ar.size();
+	for (int i = 0; i < (ar.size()) / 2; i++) {
+		swap(ar[i], ar[n-1-i]);
+	}
 
-    int dec(){
-        if(count>0){
-            count--;
-            return count;
-        }
-    }
-
-    int inc(){
-        count++;
-        return count;
-    }
-
-    void reset(){
-        count = 0;
-    }
-
-    void getc(){
-        cout<<count<<endl;
-    }
-};
-
-int main(){
-    counter c1(3);
-    c1.inc();
-    c1.getc();
-    c1.dec();
-    c1.getc();
-    c1.dec();
-    c1.getc();
-    c1.dec();
-    c1.reset();
-    c1.getc();
+	for (int i = 0; i < n; i++) {
+		cout << ar[i] << " ";
+	}
 }

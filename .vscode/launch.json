@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/0/learning/rough/dbug",
-      "program": "c:/0/learning/rough/dbug/build/Debug/outDebug",
+      "cwd": "c:/0/learning/rough",
+      "program": "c:/0/learning/rough/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
