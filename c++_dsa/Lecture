@@ -1,0 +1,1981 @@
+What Access Specifiers Control
+Access specifiers determine who can see and use a class member (variable or function). They are the primary mechanism for encapsulation in C++.
+
+cpp
+class MyClass {
+public:      // Anyone can access
+    int publicVar;
+    
+private:     // Only this class can access
+    int privateVar;
+    
+protected:   // This class and derived classes can access
+    int protectedVar;
+};
+1.1 Public – No Restrictions
+Public members are accessible from anywhere the object is visible.
+
+cpp
+#include <iostream>
+using namespace std;
+
+class PublicExample {
+public:
+    int data;
+    
+    void show() {
+        cout << "Public function called" << endl;
+    }
+};
+
+int main() {
+    PublicExample obj;
+    
+    // Direct access from main()
+    obj.data = 42;           // OK
+    obj.show();              // OK
+    
+    cout << obj.data << endl;  // 42
+    
+    return 0;
+}
+When to use public: Functions that form the interface of the class. Member variables should almost never be public.
+
+1.2 Private – Class-Only Access
+Private members can only be accessed by member functions of the same class. Not even derived classes can access private members.
+
+cpp
+#include <iostream>
+using namespace std;
+
+class PrivateExample {
+private:
+    int secretNumber;
+    string password;
+    
+    void internalHelper() {
+        cout << "Helper function called" << endl;
+    }
+    
+public:
+    PrivateExample() : secretNumber(0), password("default") {}
+    
+    void setSecret(int value) {
+        secretNumber = value;     // OK - inside class
+        internalHelper();          // OK - inside class
+    }
+    
+    int getSecret() {
+        return secretNumber;       // OK - inside class
+    }
+    
+    void setPassword(string pwd) {
+        if (pwd.length() >= 8) {   // Validation possible!
+            password = pwd;
+        } else {
+            cout << "Password too short!" << endl;
+        }
+    }
+};
+
+int main() {
+    PrivateExample obj;
+    
+    obj.setSecret(100);           // OK - public interface
+    cout << obj.getSecret() << endl;  // 100
+    
+    // obj.secretNumber = 200;    // ERROR - private
+    // obj.internalHelper();       // ERROR - private
+    
+    obj.setPassword("secure123");  // OK - validation applied
+    // obj.password = "123";       // ERROR - private
+    
+    return 0;
+}
+Key rule: Private = only within the class body. Not even child classes can access.
+
+cpp
+class Parent {
+private:
+    int parentPrivate = 10;
+    
+public:
+    int parentPublic = 20;
+};
+
+class Child : public Parent {
+public:
+    void tryAccess() {
+        // parentPrivate = 30;   // ERROR - private in parent
+        parentPublic = 40;        // OK - public is accessible
+    }
+};
+1.3 Protected – Class and Derived Classes
+Protected members are accessible in the base class and derived classes, but not outside.
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Animal {
+protected:
+    int age;
+    string name;
+    
+public:
+    Animal(string n, int a) : name(n), age(a) {}
+    
+    void breathe() {
+        cout << name << " is breathing" << endl;
+    }
+};
+
+class Dog : public Animal {
+private:
+    string breed;
+    
+public:
+    Dog(string n, int a, string b) : Animal(n, a), breed(b) {}
+    
+    void display() {
+        // Protected members accessible in derived class
+        cout << "Name: " << name << endl;     // OK - protected
+        cout << "Age: " << age << endl;       // OK - protected
+        cout << "Breed: " << breed << endl;
+        
+        // Can modify protected members
+        age = age + 1;     // OK - derived class can modify
+    }
+};
+
+int main() {
+    Dog fido("Fido", 3, "Golden");
+    fido.breathe();        // OK - public
+    fido.display();        // OK - public
+    
+    // fido.name = "Rex";  // ERROR - protected (not accessible outside)
+    // fido.age = 5;       // ERROR - protected
+    
+    return 0;
+}
+1.4 Access Specifier Comparison Table
+Access	Inside Class	Inside Derived Class	Outside Class
+public	✅ Yes	✅ Yes	✅ Yes
+protected	✅ Yes	✅ Yes	❌ No
+private	✅ Yes	❌ No	❌ No
+1.5 Default Access (If No Specifier Given)
+In a class, members are private by default.
+
+cpp
+class DefaultClass {
+    int x;           // private by default
+    void func() {}   // private by default
+    
+public:
+    int y;           // explicitly public
+};
+In a struct, members are public by default.
+
+cpp
+struct DefaultStruct {
+    int x;           // public by default
+    void func() {}   // public by default
+};
+Best practice: Always explicitly specify access. Do not rely on defaults.
+
+1.6 Multiple Access Specifiers
+A class can have multiple public:, private:, and protected: sections in any order.
+
+cpp
+class Example {
+private:
+    int a;
+    
+public:
+    void setA(int val) { a = val; }
+    
+private:
+    int b;           // Another private section
+    
+public:
+    void setB(int val) { b = val; }
+    
+protected:
+    int c;
+};
+1.7 Access Specifiers in Inheritance
+When a class inherits, the access specifier in the inheritance list determines how inherited members are transformed.
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Base {
+public:
+    int pub = 1;
+protected:
+    int prot = 2;
+private:
+    int priv = 3;
+};
+
+// PUBLIC INHERITANCE - preserves original access levels
+class PubDerived : public Base {
+    // pub remains public
+    // prot remains protected
+    // priv is inaccessible
+};
+
+// PROTECTED INHERITANCE - public becomes protected, protected remains protected
+class ProtDerived : protected Base {
+    // pub becomes protected
+    // prot remains protected
+    // priv is inaccessible
+};
+
+// PRIVATE INHERITANCE - everything becomes private
+class PrivDerived : private Base {
+    // pub becomes private
+    // prot becomes private
+    // priv is inaccessible
+};
+
+int main() {
+    PubDerived pubObj;
+    pubObj.pub = 10;     // OK - public
+    
+    ProtDerived protObj;
+    // protObj.pub = 10; // ERROR - now protected
+    
+    PrivDerived privObj;
+    // privObj.pub = 10; // ERROR - now private
+    
+    return 0;
+}
+1.8 Friend Functions and Classes – Breaking the Rules
+friend allows external functions or classes to access private and protected members.
+
+cpp
+#include <iostream>
+using namespace std;
+
+class BankAccount {
+private:
+    double balance;
+    string pin;
+    
+public:
+    BankAccount(double initial, string p) : balance(initial), pin(p) {}
+    
+    // Declare a non-member function as friend
+    friend void inspectAccount(const BankAccount& acc);
+    
+    // Declare another class as friend
+    friend class Auditor;
+};
+
+// Friend function can access private members
+void inspectAccount(const BankAccount& acc) {
+    cout << "Balance: " << acc.balance << endl;     // OK - friend
+    cout << "PIN hash: " << acc.pin << endl;        // OK - friend
+}
+
+class Auditor {
+public:
+    void audit(const BankAccount& acc) {
+        cout << "Auditing balance: " << acc.balance << endl;
+        // Can access private members
+    }
+};
+
+int main() {
+    BankAccount acc(5000, "1234");
+    inspectAccount(acc);   // Friend function
+    Auditor a;
+    a.audit(acc);          // Friend class
+    
+    // acc.balance = 1000; // ERROR - still private to non-friends
+    
+    return 0;
+}
+When to use friend:
+
+Operator overloading (<<, >>) – see later
+
+Two classes that are tightly coupled (Container and Iterator)
+
+Testing frameworks
+
+When NOT to use friend:
+
+To avoid writing getters/setters (bad design)
+
+When the called function could be a member instead
+
+1.9 Edge Cases and Common Pitfalls
+Edge Case 1: Accessing Private Members Through Public Functions
+cpp
+class DataHolder {
+private:
+    int secret = 100;
+    
+public:
+    int* getSecretPointer() {
+        return &secret;   // DANGEROUS - exposes private address
+    }
+    
+    const int& getSecretReference() const {
+        return secret;    // Read-only access - safer but still exposes
+    }
+};
+
+int main() {
+    DataHolder dh;
+    int* ptr = dh.getSecretPointer();
+    *ptr = 999;           // Modifies private member via pointer!
+    // This bypasses encapsulation entirely. Don't do this.
+    
+    return 0;
+}
+Edge Case 2: Member Functions Can Access Private Members of Any Object of Same Class
+cpp
+class Equalable {
+private:
+    int value;
+    
+public:
+    Equalable(int v) : value(v) {}
+    
+    bool isEqual(const Equalable& other) const {
+        // Can access other's private member!
+        return this->value == other.value;
+    }
+};
+
+int main() {
+    Equalable a(10), b(10), c(20);
+    cout << a.isEqual(b) << endl;  // 1 (true)
+    cout << a.isEqual(c) << endl;  // 0 (false)
+    return 0;
+}
+Edge Case 3: Static Members Have Same Access Rules
+cpp
+class Counter {
+private:
+    static int count;    // Private static member
+    
+public:
+    Counter() { count++; }
+    static int getCount() { return count; }
+};
+
+int Counter::count = 0;  // Definition – OK, but still private
+
+int main() {
+    Counter c1, c2;
+    cout << Counter::getCount() << endl;  // 2
+    // cout << Counter::count << endl;    // ERROR - private
+    return 0;
+}
+Edge Case 4: Access Specifiers Apply to Nested Classes
+cpp
+class Outer {
+private:
+    int outerData = 10;
+    
+public:
+    class PublicInner {
+    public:
+        void show() { cout << "Public inner" << endl; }
+    };
+    
+private:
+    class PrivateInner {
+    public:
+        void show() { cout << "Private inner" << endl; }
+    };
+    
+public:
+    void usePrivateInner() {
+        PrivateInner pi;
+        pi.show();    // OK - Outer can access its private nested class
+    }
+};
+
+int main() {
+    Outer::PublicInner pub;
+    pub.show();           // OK
+    
+    // Outer::PrivateInner priv;  // ERROR - PrivateInner is private
+    Outer o;
+    o.usePrivateInner();  // Works through public interface
+    
+    return 0;
+}
+1.10 Access Specifiers Summary Table
+Situation	public	protected	private
+Access from outside class	✅	❌	❌
+Access from derived class	✅	✅	❌
+Can be changed by inheritance?	Can become protected/private	Remains protected/becomes private	Never accessible
+Typical use	Interface methods	For derived class extension	Internal data, helper methods
+Part 2: The Four Pillars of OOP – Brief Introduction
+What Are the Four Pillars?
+Pillar	One-Sentence Definition
+Encapsulation	Bundling data with methods that operate on that data, and hiding internal details from outside access
+Abstraction	Showing only essential features while hiding complex implementation details
+Inheritance	Creating new classes that acquire properties and behaviors from existing classes
+Polymorphism	The same function call producing different behaviors depending on the actual object type
+Brief Explanation of Each Pillar
+Encapsulation (Brief)
+What: Hide internal state, expose controlled interface
+
+How in C++: private/protected members + public getters/setters
+
+Why: Prevents invalid states, reduces coupling, enables maintenance
+
+Abstraction (Brief)
+What: Simplify complex reality by modeling classes appropriate to the problem
+
+How in C++: Abstract classes with pure virtual functions
+
+Why: Reduces complexity, allows focusing on what rather than how
+
+Inheritance (Brief)
+What: Create a hierarchy where child classes reuse and extend parent classes
+
+How in C++: class Derived : public Base
+
+Why: Code reuse, establishes "is-a" relationships
+
+Polymorphism (Brief)
+What: Same interface, different implementations
+
+How in C++: virtual functions, base class pointers/references
+
+Why: Flexibility, extensibility, Open/Closed Principle
+
+Detailed deep dive of each pillar begins after we establish inheritance foundation.
+
+Part 3: Inheritance – Deep Dive (Prerequisite)
+Inheritance is taught FIRST because later examples of Polymorphism and Abstraction require it.
+
+3.1 Why Inheritance Exists
+Without inheritance, similar classes repeat the same code.
+
+cpp
+// WITHOUT INHERITANCE - Code duplication
+class Dog {
+private:
+    string name;
+    int age;
+public:
+    void eat() { cout << name << " is eating" << endl; }
+    void sleep() { cout << name << " is sleeping" << endl; }
+    void bark() { cout << name << " barks" << endl; }
+};
+
+class Cat {
+private:
+    string name;
+    int age;
+public:
+    void eat() { cout << name << " is eating" << endl; }
+    void sleep() { cout << name << " is sleeping" << endl; }
+    void meow() { cout << name << " meows" << endl; }
+};
+// eat() and sleep() are duplicated!
+3.2 Basic Inheritance Syntax
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Base class (parent)
+class Animal {
+protected:
+    string name;
+    int age;
+    
+public:
+    Animal(string n, int a) : name(n), age(a) {}
+    
+    void eat() {
+        cout << name << " is eating" << endl;
+    }
+    
+    void sleep() {
+        cout << name << " is sleeping" << endl;
+    }
+    
+    void display() {
+        cout << "Name: " << name << ", Age: " << age << endl;
+    }
+};
+
+// Derived class (child)
+class Dog : public Animal {
+private:
+    string breed;
+    
+public:
+    Dog(string n, int a, string b) : Animal(n, a), breed(b) {}
+    
+    void bark() {
+        cout << name << " says Woof!" << endl;
+    }
+    
+    void showBreed() {
+        cout << name << " is a " << breed << endl;
+    }
+};
+
+// Another derived class
+class Cat : public Animal {
+public:
+    Cat(string n, int a) : Animal(n, a) {}
+    
+    void meow() {
+        cout << name << " says Meow!" << endl;
+    }
+};
+
+int main() {
+    Dog fido("Fido", 3, "Golden Retriever");
+    Cat whiskers("Whiskers", 5);
+    
+    // Inherited from Animal
+    fido.eat();          // Fido is eating
+    fido.sleep();        // Fido is sleeping
+    fido.display();      // Name: Fido, Age: 3
+    
+    // Dog-specific
+    fido.bark();         // Fido says Woof!
+    fido.showBreed();    // Fido is a Golden Retriever
+    
+    // Cat inherited + specific
+    whiskers.eat();      // Whiskers is eating
+    whiskers.meow();     // Whiskers says Meow!
+    
+    return 0;
+}
+3.3 The protected Access Specifier in Inheritance
+cpp
+class Base {
+private:
+    int privateVar = 1;     // Not accessible in derived class
+    
+protected:
+    int protectedVar = 2;   // Accessible in derived class
+    
+public:
+    int publicVar = 3;      // Accessible everywhere
+};
+
+class Derived : public Base {
+public:
+    void showAccess() {
+        // cout << privateVar;   // ERROR - private in base
+        cout << protectedVar;    // OK - protected
+        cout << publicVar;       // OK - public
+    }
+};
+3.4 Constructor and Destructor Order
+cpp
+#include <iostream>
+using namespace std;
+
+class Base {
+public:
+    Base() { cout << "Base constructor" << endl; }
+    ~Base() { cout << "Base destructor" << endl; }
+};
+
+class Derived : public Base {
+public:
+    Derived() { cout << "Derived constructor" << endl; }
+    ~Derived() { cout << "Derived destructor" << endl; }
+};
+
+int main() {
+    cout << "Creating object:" << endl;
+    Derived d;
+    cout << "Destroying object:" << endl;
+    return 0;
+}
+Output:
+
+text
+Creating object:
+Base constructor
+Derived constructor
+Destroying object:
+Derived destructor
+Base destructor
+Rule: Base class constructor runs first, then derived. Destruction is reverse order.
+
+3.5 Types of Inheritance
+cpp
+// Single inheritance
+class A {};
+class B : public A {};
+
+// Multilevel inheritance
+class A {};
+class B : public A {};
+class C : public B {};
+
+// Hierarchical inheritance
+class A {};
+class B : public A {};
+class C : public A {};
+
+// Multiple inheritance
+class A {};
+class B {};
+class C : public A, public B {};
+Part 4: Encapsulation – Deep Dive
+4.1 What Encapsulation Really Means
+Encapsulation has two distinct parts:
+
+Bundling – Data and operations on that data are together in one unit (the class)
+
+Hiding – Internal details are hidden from outside code
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class BankAccount {
+private:
+    // HIDDEN from outside
+    string accountNumber;
+    double balance;
+    string pin;
+    int failedAttempts;
+    
+    // Private helper - internal use only
+    bool validatePin(string enteredPin) {
+        return enteredPin == pin;
+    }
+    
+    void logTransaction(string type, double amount) {
+        cout << "[LOG] " << type << ": " << amount << ", Balance: " << balance << endl;
+    }
+    
+public:
+    // PUBLIC interface
+    BankAccount(string accNo, string p, double initial)
+        : accountNumber(accNo), pin(p), balance(initial), failedAttempts(0) {
+        logTransaction("CREATED", initial);
+    }
+    
+    bool withdraw(string enteredPin, double amount) {
+        if (!validatePin(enteredPin)) {
+            failedAttempts++;
+            cout << "Invalid PIN. Attempt " << failedAttempts << endl;
+            return false;
+        }
+        
+        if (amount <= 0) {
+            cout << "Amount must be positive" << endl;
+            return false;
+        }
+        
+        if (amount > balance) {
+            cout << "Insufficient funds" << endl;
+            return false;
+        }
+        
+        balance -= amount;
+        logTransaction("WITHDRAW", amount);
+        return true;
+    }
+    
+    void deposit(double amount) {
+        if (amount <= 0) {
+            cout << "Amount must be positive" << endl;
+            return;
+        }
+        balance += amount;
+        logTransaction("DEPOSIT", amount);
+    }
+    
+    double getBalance(string enteredPin) {
+        if (validatePin(enteredPin)) {
+            return balance;
+        }
+        return -1;
+    }
+};
+
+int main() {
+    BankAccount acc("123456", "1234", 1000);
+    
+    acc.deposit(500);
+    acc.withdraw("1234", 200);
+    cout << "Balance: " << acc.getBalance("1234") << endl;
+    
+    // Cannot access private members:
+    // acc.balance = 999999;     // ERROR
+    // acc.pin = "0000";         // ERROR
+    // acc.validatePin("1234");  // ERROR
+    
+    return 0;
+}
+4.2 Why Encapsulation Matters
+Without Encapsulation	With Encapsulation
+Any code can modify any variable	Only class controls its data
+Invalid states common (negative balance)	Validation prevents invalid states
+Changing internals breaks all callers	Internal changes don't affect callers
+Debugging is hard (who changed value?)	Clear entry points for modification
+No invariants can be maintained	Invariants (like balance >= 0) guaranteed
+4.3 Getters and Setters Best Practices
+cpp
+class Product {
+private:
+    string name;
+    double price;
+    int quantity;
+    
+public:
+    Product(string n, double p, int q) : name(n), price(p), quantity(q) {}
+    
+    // Getter - const, returns copy or const reference
+    string getName() const { return name; }
+    
+    // Getter with computed value
+    double getTotalValue() const { return price * quantity; }
+    
+    // Setter with validation
+    void setPrice(double newPrice) {
+        if (newPrice >= 0) {
+            price = newPrice;
+        } else {
+            cout << "Price cannot be negative" << endl;
+        }
+    }
+    
+    // Setter with side effects
+    void setQuantity(int newQuantity) {
+        if (newQuantity >= 0) {
+            quantity = newQuantity;
+        } else {
+            cout << "Quantity cannot be negative" << endl;
+        }
+    }
+};
+Part 5: Abstraction – Deep Dive
+5.1 What Abstraction Means
+Abstraction is showing only essential features while hiding implementation details.
+
+Real-world analogy: A car's dashboard. The driver sees speedometer, fuel gauge, steering wheel. The complex engine, transmission, and electronics are hidden.
+
+5.2 Abstract Classes and Pure Virtual Functions
+A pure virtual function is declared with = 0. A class with at least one pure virtual function is abstract – cannot be instantiated.
+
+cpp
+#include <iostream>
+#include <string>
+#include <cmath>
+using namespace std;
+
+// ABSTRACT CLASS - defines WHAT not HOW
+class Shape {
+public:
+    // Pure virtual functions - no implementation here
+    virtual double area() const = 0;
+    virtual double perimeter() const = 0;
+    virtual string getName() const = 0;
+    
+    // Virtual destructor - essential for abstract base classes
+    virtual ~Shape() {}
+};
+
+// CONCRETE CLASS - implements the abstraction
+class Circle : public Shape {
+private:
+    double radius;
+    
+public:
+    Circle(double r) : radius(r) {}
+    
+    double area() const override {
+        return M_PI * radius * radius;
+    }
+    
+    double perimeter() const override {
+        return 2 * M_PI * radius;
+    }
+    
+    string getName() const override {
+        return "Circle";
+    }
+};
+
+class Rectangle : public Shape {
+private:
+    double width, height;
+    
+public:
+    Rectangle(double w, double h) : width(w), height(h) {}
+    
+    double area() const override {
+        return width * height;
+    }
+    
+    double perimeter() const override {
+        return 2 * (width + height);
+    }
+    
+    string getName() const override {
+        return "Rectangle";
+    }
+};
+
+int main() {
+    // Shape s;                      // ERROR - cannot instantiate abstract class
+    
+    Circle c(5);
+    Rectangle r(4, 6);
+    
+    cout << c.getName() << " area: " << c.area() << endl;      // Circle area: 78.5398
+    cout << r.getName() << " area: " << r.area() << endl;      // Rectangle area: 24
+    
+    // Polymorphic behavior (requires inheritance - we have it)
+    Shape* shapes[] = {&c, &r};
+    for (int i = 0; i < 2; i++) {
+        cout << shapes[i]->getName() << ": " << shapes[i]->area() << endl;
+    }
+    
+    return 0;
+}
+5.3 Interface Segregation Principle
+Small, focused abstract classes are better than large, monolithic ones.
+
+cpp
+// BAD - one huge abstract class
+class Machine {
+public:
+    virtual void print() = 0;
+    virtual void scan() = 0;
+    virtual void fax() = 0;
+    virtual ~Machine() {}
+};
+
+// A simple printer forced to implement scan and fax
+class SimplePrinter : public Machine {
+public:
+    void print() override { cout << "Printing" << endl; }
+    void scan() override { }  // Empty - not supported
+    void fax() override { }   // Empty - not supported
+};
+
+// GOOD - segregated interfaces
+class Printer {
+public:
+    virtual void print() = 0;
+    virtual ~Printer() {}
+};
+
+class Scanner {
+public:
+    virtual void scan() = 0;
+    virtual ~Scanner() {}
+};
+
+class GoodPrinter : public Printer {
+public:
+    void print() override { cout << "Printing" << endl; }
+};
+Part 6: Polymorphism – Deep Dive
+6.1 What Polymorphism Means
+Poly = many, Morph = forms. Same function call, different behaviors based on actual object type.
+
+6.2 Virtual Functions – The Core of Runtime Polymorphism
+cpp
+#include <iostream>
+using namespace std;
+
+class Animal {
+public:
+    // Virtual function - can be overridden
+    virtual void makeSound() const {
+        cout << "Some generic animal sound" << endl;
+    }
+    
+    // Non-virtual function
+    void breathe() const {
+        cout << "Breathing" << endl;
+    }
+    
+    virtual ~Animal() {}
+};
+
+class Dog : public Animal {
+public:
+    void makeSound() const override {
+        cout << "Woof! Woof!" << endl;
+    }
+};
+
+class Cat : public Animal {
+public:
+    void makeSound() const override {
+        cout << "Meow!" << endl;
+    }
+};
+
+void describeAnimal(const Animal& a) {
+    a.makeSound();  // Virtual - calls correct version
+    a.breathe();    // Non-virtual - always calls Animal version
+}
+
+int main() {
+    Dog d;
+    Cat c;
+    
+    describeAnimal(d);  // Woof! Woof!\nBreathing
+    describeAnimal(c);  // Meow!\nBreathing
+    
+    return 0;
+}
+6.3 How Virtual Functions Work (VTable)
+When a class has virtual functions, the compiler creates a vtable (virtual table) – an array of function pointers.
+
+text
+Object memory layout with virtual functions:
++----------------+
+| vptr --------->|----> [ &Dog::makeSound, &Dog::~Dog ]
++----------------+
+| name           |
++----------------+
+| age            |
++----------------+
+6.4 The override Keyword (C++11)
+cpp
+class Base {
+public:
+    virtual void func1() {}
+    virtual void func2() {}
+};
+
+class Derived : public Base {
+public:
+    void func1() override { }      // OK - correctly overrides
+    // void func2(int x) override { }  // ERROR - no matching base function
+    // void func3() override { }       // ERROR - no virtual func3 in base
+};
+6.5 Pure Virtual Functions and Abstract Classes
+cpp
+// Abstract class
+class Drawable {
+public:
+    virtual void draw() = 0;      // Pure virtual
+    virtual ~Drawable() {}
+};
+
+class Circle : public Drawable {
+public:
+    void draw() override {
+        cout << "Drawing a circle" << endl;
+    }
+};
+
+class Square : public Drawable {
+public:
+    void draw() override {
+        cout << "Drawing a square" << endl;
+    }
+};
+
+void render(Drawable& d) {
+    d.draw();  // Polymorphic call
+}
+Part 7: Complete Integrated Examples
+Example 1: Banking System (All Four Pillars)
+cpp
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// ============ ABSTRACTION ============
+// Abstract class defines WHAT operations an account must support
+class Account {
+protected:
+    string accountNumber;
+    string holderName;
+    double balance;
+    
+public:
+    Account(string accNo, string name, double initial)
+        : accountNumber(accNo), holderName(name), balance(initial) {}
+    
+    // Pure virtual functions - ABSTRACTION
+    virtual void deposit(double amount) = 0;
+    virtual bool withdraw(double amount) = 0;
+    virtual double getBalance() const = 0;
+    virtual string getAccountType() const = 0;
+    virtual void calculateInterest() = 0;
+    
+    // Regular virtual function
+    virtual void display() const {
+        cout << "Account: " << accountNumber << endl;
+        cout << "Holder: " << holderName << endl;
+        cout << "Balance: $" << balance << endl;
+    }
+    
+    virtual ~Account() {}
+};
+
+// ============ INHERITANCE ============
+class SavingsAccount : public Account {
+private:
+    double interestRate;
+    int withdrawalCount;
+    static const int FREE_WITHDRAWALS = 3;
+    static const double WITHDRAWAL_FEE;
+    
+public:
+    SavingsAccount(string accNo, string name, double initial, double rate)
+        : Account(accNo, name, initial), interestRate(rate), withdrawalCount(0) {}
+    
+    // ENCAPSULATION - method with validation
+    void deposit(double amount) override {
+        if (amount <= 0) {
+            cout << "Deposit amount must be positive" << endl;
+            return;
+        }
+        balance += amount;
+        cout << "Deposited $" << amount << " to savings account" << endl;
+    }
+    
+    bool withdraw(double amount) override {
+        if (amount <= 0) {
+            cout << "Withdrawal amount must be positive" << endl;
+            return false;
+        }
+        
+        double finalAmount = amount;
+        withdrawalCount++;
+        
+        if (withdrawalCount > FREE_WITHDRAWALS) {
+            finalAmount += WITHDRAWAL_FEE;
+            cout << "Withdrawal fee of $" << WITHDRAWAL_FEE << " applied" << endl;
+        }
+        
+        if (finalAmount > balance) {
+            cout << "Insufficient funds" << endl;
+            return false;
+        }
+        
+        balance -= finalAmount;
+        cout << "Withdrew $" << amount << " from savings account" << endl;
+        return true;
+    }
+    
+    double getBalance() const override {
+        return balance;
+    }
+    
+    string getAccountType() const override {
+        return "Savings";
+    }
+    
+    void calculateInterest() override {
+        double interest = balance * interestRate / 100;
+        balance += interest;
+        cout << "Interest of $" << interest << " added to savings account" << endl;
+    }
+    
+    void display() const override {
+        Account::display();
+        cout << "Type: Savings, Rate: " << interestRate << "%, Free withdrawals left: "
+             << (FREE_WITHDRAWALS - withdrawalCount) << endl;
+    }
+};
+
+const double SavingsAccount::WITHDRAWAL_FEE = 2.0;
+
+class CurrentAccount : public Account {
+private:
+    double overdraftLimit;
+    
+public:
+    CurrentAccount(string accNo, string name, double initial, double overdraft)
+        : Account(accNo, name, initial), overdraftLimit(overdraft) {}
+    
+    void deposit(double amount) override {
+        if (amount <= 0) {
+            cout << "Deposit amount must be positive" << endl;
+            return;
+        }
+        balance += amount;
+        cout << "Deposited $" << amount << " to current account" << endl;
+    }
+    
+    bool withdraw(double amount) override {
+        if (amount <= 0) {
+            cout << "Withdrawal amount must be positive" << endl;
+            return false;
+        }
+        
+        if (amount > balance + overdraftLimit) {
+            cout << "Exceeds overdraft limit" << endl;
+            return false;
+        }
+        
+        balance -= amount;
+        cout << "Withdrew $" << amount << " from current account" << endl;
+        return true;
+    }
+    
+    double getBalance() const override {
+        return balance;
+    }
+    
+    string getAccountType() const override {
+        return "Current";
+    }
+    
+    void calculateInterest() override {
+        // Current accounts typically don't earn interest
+        cout << "Current account does not earn interest" << endl;
+    }
+    
+    void display() const override {
+        Account::display();
+        cout << "Type: Current, Overdraft limit: $" << overdraftLimit << endl;
+    }
+};
+
+// ============ POLYMORPHISM ============
+// This function works with ANY Account type
+void processEndOfMonth(Account* acc) {
+    cout << "\nProcessing end of month for " << acc->getAccountType() << " account" << endl;
+    acc->calculateInterest();
+    cout << "New balance: $" << acc->getBalance() << endl;
+}
+
+int main() {
+    // Polymorphic container
+    vector<Account*> accounts;
+    
+    accounts.push_back(new SavingsAccount("SAV001", "Alice", 1000, 4.5));
+    accounts.push_back(new CurrentAccount("CUR001", "Bob", 500, 200));
+    accounts.push_back(new SavingsAccount("SAV002", "Charlie", 2000, 5.0));
+    
+    // Perform operations polymorphically
+    for (auto* acc : accounts) {
+        acc->display();
+        cout << "---" << endl;
+    }
+    
+    cout << "\n=== Transactions ===" << endl;
+    accounts[0]->deposit(200);
+    accounts[0]->withdraw(150);
+    accounts[0]->withdraw(100);  // This one may incur fee
+    
+    accounts[1]->withdraw(600);   // Uses overdraft
+    accounts[1]->withdraw(100);
+    
+    cout << "\n=== End of Month Processing ===" << endl;
+    for (auto* acc : accounts) {
+        processEndOfMonth(acc);
+    }
+    
+    // Cleanup
+    for (auto* acc : accounts) {
+        delete acc;
+    }
+    
+    return 0;
+}
+Example 2: Employee Management System
+cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+// ============ ABSTRACTION ============
+class Employee {
+protected:
+    string name;
+    int id;
+    double baseSalary;
+    
+public:
+    Employee(string n, int i, double salary)
+        : name(n), id(i), baseSalary(salary) {}
+    
+    // Pure virtual - ABSTRACTION
+    virtual double calculateSalary() const = 0;
+    virtual string getRole() const = 0;
+    
+    // Regular virtual
+    virtual void display() const {
+        cout << "ID: " << id << ", Name: " << name << ", Role: " << getRole();
+        cout << ", Salary: $" << calculateSalary() << endl;
+    }
+    
+    // ENCAPSULATION - getters
+    string getName() const { return name; }
+    int getId() const { return id; }
+    double getBaseSalary() const { return baseSalary; }
+    
+    virtual ~Employee() {}
+};
+
+// ============ INHERITANCE ============
+class FullTimeEmployee : public Employee {
+private:
+    double bonus;
+    double benefits;
+    
+public:
+    FullTimeEmployee(string n, int i, double salary, double b, double ben)
+        : Employee(n, i, salary), bonus(b), benefits(ben) {}
+    
+    double calculateSalary() const override {
+        return baseSalary + bonus + benefits;
+    }
+    
+    string getRole() const override {
+        return "Full-Time";
+    }
+    
+    void display() const override {
+        cout << "ID: " << id << ", Name: " << name << ", Role: " << getRole();
+        cout << ", Base: $" << baseSalary << ", Bonus: $" << bonus;
+        cout << ", Benefits: $" << benefits << ", Total: $" << calculateSalary() << endl;
+    }
+};
+
+class PartTimeEmployee : public Employee {
+private:
+    double hourlyRate;
+    int hoursWorked;
+    
+public:
+    PartTimeEmployee(string n, int i, double rate, int hours)
+        : Employee(n, i, 0), hourlyRate(rate), hoursWorked(hours) {}
+    
+    double calculateSalary() const override {
+        return hourlyRate * hoursWorked;
+    }
+    
+    string getRole() const override {
+        return "Part-Time";
+    }
+    
+    void display() const override {
+        cout << "ID: " << id << ", Name: " << name << ", Role: " << getRole();
+        cout << ", Rate: $" << hourlyRate << "/hr, Hours: " << hoursWorked;
+        cout << ", Total: $" << calculateSalary() << endl;
+    }
+};
+
+class Manager : public FullTimeEmployee {
+private:
+    double teamBonus;
+    int teamSize;
+    
+public:
+    Manager(string n, int i, double salary, double bonus, double ben, double tBonus, int size)
+        : FullTimeEmployee(n, i, salary, bonus, ben), teamBonus(tBonus), teamSize(size) {}
+    
+    double calculateSalary() const override {
+        return FullTimeEmployee::calculateSalary() + teamBonus;
+    }
+    
+    string getRole() const override {
+        return "Manager";
+    }
+    
+    void display() const override {
+        FullTimeEmployee::display();
+        cout << "  Team size: " << teamSize << ", Team bonus: $" << teamBonus << endl;
+    }
+};
+
+// ============ POLYMORPHISM ============
+void printPayroll(const vector<Employee*>& employees) {
+    cout << "\n=== PAYROLL REPORT ===" << endl;
+    double total = 0;
+    
+    for (const auto* emp : employees) {
+        emp->display();
+        total += emp->calculateSalary();
+    }
+    
+    cout << "\nTotal payroll: $" << total << endl;
+}
+
+int main() {
+    vector<Employee*> company;
+    
+    company.push_back(new FullTimeEmployee("Alice", 1001, 50000, 5000, 8000));
+    company.push_back(new PartTimeEmployee("Bob", 1002, 25, 80));
+    company.push_back(new Manager("Charlie", 1003, 80000, 10000, 12000, 15000, 8));
+    company.push_back(new FullTimeEmployee("Diana", 1004, 55000, 4000, 8000));
+    company.push_back(new PartTimeEmployee("Eve", 1005, 30, 60));
+    
+    printPayroll(company);
+    
+    // Polymorphic operations
+    cout << "\n=== MANAGER ACTIONS ===" << endl;
+    for (auto* emp : company) {
+        if (emp->getRole() == "Manager") {
+            cout << emp->getName() << " is a manager with salary $";
+            cout << emp->calculateSalary() << endl;
+        }
+    }
+    
+    // Cleanup
+    for (auto* emp : company) {
+        delete emp;
+    }
+    
+    return 0;
+}
+Example 3: Media Player System
+cpp
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// ============ ABSTRACTION ============
+class MediaPlayer {
+protected:
+    string title;
+    int duration;  // seconds
+    
+public:
+    MediaPlayer(string t, int d) : title(t), duration(d) {}
+    
+    virtual void play() = 0;
+    virtual void pause() = 0;
+    virtual void stop() = 0;
+    virtual string getFormat() const = 0;
+    
+    void showInfo() const {
+        cout << "Title: " << title << ", Duration: " << duration << "s, Format: " << getFormat() << endl;
+    }
+    
+    virtual ~MediaPlayer() {}
+};
+
+// ============ INHERITANCE ============
+class AudioPlayer : public MediaPlayer {
+private:
+    int bitrate;  // ENCAPSULATION - private data
+    bool isPlaying;
+    
+public:
+    AudioPlayer(string t, int d, int br) 
+        : MediaPlayer(t, d), bitrate(br), isPlaying(false) {}
+    
+    void play() override {
+        if (!isPlaying) {
+            isPlaying = true;
+            cout << "▶ Playing audio: " << title << " (bitrate: " << bitrate << "kbps)" << endl;
+        } else {
+            cout << "Already playing" << endl;
+        }
+    }
+    
+    void pause() override {
+        if (isPlaying) {
+            isPlaying = false;
+            cout << "⏸ Paused audio: " << title << endl;
+        }
+    }
+    
+    void stop() override {
+        if (isPlaying) {
+            isPlaying = false;
+            cout << "⏹ Stopped audio: " << title << endl;
+        }
+    }
+    
+    string getFormat() const override {
+        return "Audio";
+    }
+};
+
+class VideoPlayer : public MediaPlayer {
+private:
+    string resolution;
+    bool isPlaying;
+    
+public:
+    VideoPlayer(string t, int d, string res)
+        : MediaPlayer(t, d), resolution(res), isPlaying(false) {}
+    
+    void play() override {
+        if (!isPlaying) {
+            isPlaying = true;
+            cout << "▶ Playing video: " << title << " (" << resolution << ")" << endl;
+        }
+    }
+    
+    void pause() override {
+        if (isPlaying) {
+            isPlaying = false;
+            cout << "⏸ Paused video: " << title << endl;
+        }
+    }
+    
+    void stop() override {
+        if (isPlaying) {
+            isPlaying = false;
+            cout << "⏹ Stopped video: " << title << endl;
+        }
+    }
+    
+    string getFormat() const override {
+        return "Video";
+    }
+};
+
+// ============ POLYMORPHISM ============
+class Playlist {
+private:
+    vector<MediaPlayer*> items;
+    
+public:
+    void add(MediaPlayer* item) {
+        items.push_back(item);
+    }
+    
+    void playAll() {
+        cout << "\n=== PLAYING PLAYLIST ===" << endl;
+        for (auto* item : items) {
+            item->play();
+        }
+    }
+    
+    void showAllInfo() {
+        cout << "\n=== PLAYLIST CONTENTS ===" << endl;
+        for (auto* item : items) {
+            item->showInfo();
+        }
+    }
+};
+
+int main() {
+    Playlist myPlaylist;
+    
+    // Create media items
+    AudioPlayer song1("Bohemian Rhapsody", 355, 320);
+    AudioPlayer song2("Imagine", 183, 256);
+    VideoPlayer movie1("Inception", 8880, "1080p");
+    VideoPlayer clip1("Trailer", 120, "4K");
+    AudioPlayer podcast("Tech Talk", 2700, 128);
+    
+    // Add to playlist (polymorphic - all treated as MediaPlayer)
+    myPlaylist.add(&song1);
+    myPlaylist.add(&movie1);
+    myPlaylist.add(&song2);
+    myPlaylist.add(&clip1);
+    myPlaylist.add(&podcast);
+    
+    myPlaylist.showAllInfo();
+    myPlaylist.playAll();
+    
+    // Individual controls
+    cout << "\n=== INDIVIDUAL CONTROLS ===" << endl;
+    song1.pause();
+    movie1.stop();
+    song2.play();
+    
+    return 0;
+}
+Summary: The Four Pillars with C++ Mechanisms
+Pillar	C++ Mechanism	Purpose
+Encapsulation	private/protected, getters/setters, friend	Hide internal data, control access, maintain invariants
+Abstraction	Pure virtual functions, abstract classes	Hide complexity, define clean interfaces
+Inheritance	class Derived : public Base, protected access	Code reuse, "is-a" relationships
+Polymorphism	virtual functions, override, vtables	One interface, many implementations
+5 LeetCode Medium Questions (Looping Focus)
+Question 1: Container With Most Water
+LeetCode 11 | Difficulty: Medium
+
+Problem Statement
+Given an integer array height of length n. Find two lines that together with the x-axis form a container that holds the most water. Return maximum amount of water.
+
+Example Cases
+
+Input	Output	Explanation
+[1,8,6,2,5,4,8,3,7]	49	Between indices 1 (8) and 8 (7): min(8,7) × 7 = 49
+[1,1]	1	min(1,1) × 1 = 1
+Constraints
+
+2 ≤ n ≤ 10⁵
+
+0 ≤ height[i] ≤ 10⁴
+
+Solution – Brute Force
+cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int maxAreaBrute(vector<int>& height) {
+    int n = height.size();
+    int maxWater = 0;
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            int water = min(height[i], height[j]) * (j - i);
+            maxWater = max(maxWater, water);
+        }
+    }
+    return maxWater;
+}
+
+int main() {
+    vector<int> height = {1, 8, 6, 2, 5, 4, 8, 3, 7};
+    cout << "Max water: " << maxAreaBrute(height) << endl;  // 49
+    return 0;
+}
+Time Complexity: O(n²)
+Space Complexity: O(1)
+
+Explanation: Check every possible pair of lines. For n=10⁵, this is ~5×10⁹ operations – too slow.
+
+Solution – Optimized (Two Pointers)
+cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int maxArea(vector<int>& height) {
+    int left = 0;
+    int right = height.size() - 1;
+    int maxWater = 0;
+    
+    while (left < right) {
+        int currentWater = min(height[left], height[right]) * (right - left);
+        maxWater = max(maxWater, currentWater);
+        
+        // Move the pointer pointing to the shorter line
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    return maxWater;
+}
+
+int main() {
+    vector<int> height = {1, 8, 6, 2, 5, 4, 8, 3, 7};
+    cout << "Max water: " << maxArea(height) << endl;  // 49
+    return 0;
+}
+Time Complexity: O(n) – single pass
+Space Complexity: O(1)
+
+Explanation of optimization: When height[left] < height[right], moving right inward decreases width and height (limited by left). Only moving the shorter pointer could increase area.
+
+Question 2: 3Sum
+LeetCode 15 | Difficulty: Medium
+
+Problem Statement
+Return all triplets [nums[i], nums[j], nums[k]] such that i != j != k and nums[i] + nums[j] + nums[k] == 0. No duplicate triplets.
+
+Example Cases
+
+Input	Output
+[-1,0,1,2,-1,-4]	[[-1,-1,2],[-1,0,1]]
+[0,1,1]	[]
+Constraints
+
+3 ≤ nums.length ≤ 3000
+
+-10⁵ ≤ nums[i] ≤ 10⁵
+
+Solution – Brute Force
+cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+using namespace std;
+
+vector<vector<int>> threeSumBrute(vector<int>& nums) {
+    int n = nums.size();
+    set<vector<int>> uniqueTriplets;
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            for (int k = j + 1; k < n; k++) {
+                if (nums[i] + nums[j] + nums[k] == 0) {
+                    vector<int> triplet = {nums[i], nums[j], nums[k]};
+                    sort(triplet.begin(), triplet.end());
+                    uniqueTriplets.insert(triplet);
+                }
+            }
+        }
+    }
+    
+    return vector<vector<int>>(uniqueTriplets.begin(), uniqueTriplets.end());
+}
+
+int main() {
+    vector<int> nums = {-1, 0, 1, 2, -1, -4};
+    auto result = threeSumBrute(nums);
+    for (auto& t : result) {
+        cout << "[" << t[0] << "," << t[1] << "," << t[2] << "] ";
+    }
+    return 0;
+}
+Time Complexity: O(n³)
+Space Complexity: O(n) for set
+
+Solution – Optimized (Sort + Two Pointers)
+cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+vector<vector<int>> threeSum(vector<int>& nums) {
+    vector<vector<int>> result;
+    int n = nums.size();
+    
+    sort(nums.begin(), nums.end());
+    
+    for (int i = 0; i < n - 2; i++) {
+        // Skip duplicate i values
+        if (i > 0 && nums[i] == nums[i - 1]) continue;
+        
+        int left = i + 1;
+        int right = n - 1;
+        
+        while (left < right) {
+            int sum = nums[i] + nums[left] + nums[right];
+            
+            if (sum == 0) {
+                result.push_back({nums[i], nums[left], nums[right]});
+                
+                // Skip duplicates
+                while (left < right && nums[left] == nums[left + 1]) left++;
+                while (left < right && nums[right] == nums[right - 1]) right--;
+                
+                left++;
+                right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    vector<int> nums = {-1, 0, 1, 2, -1, -4};
+    auto result = threeSum(nums);
+    for (auto& t : result) {
+        cout << "[" << t[0] << "," << t[1] << "," << t[2] << "] ";
+    }
+    return 0;
+}
+Time Complexity: O(n²)
+Space Complexity: O(1) excluding output
+
+Explanation: Sort array first. Fix one element, then use two pointers to find pairs that sum to its negative. Skip duplicates to avoid repeating triplets.
+
+Question 3: Subarray Sum Equals K
+LeetCode 560 | Difficulty: Medium
+
+Problem Statement
+Given an array of integers nums and an integer k, return the total number of continuous subarrays whose sum equals k.
+
+Example Cases
+
+Input	Output	Explanation
+[1,1,1], k=2	2	Subarrays: [1,1] at indices (0,1) and (1,2)
+[1,2,3], k=3	2	Subarrays: [1,2] and [3]
+Constraints
+
+1 ≤ nums.length ≤ 2×10⁴
+
+-1000 ≤ nums[i] ≤ 1000
+
+-10⁷ ≤ k ≤ 10⁷
+
+Solution – Brute Force
+cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int subarraySumBrute(vector<int>& nums, int k) {
+    int n = nums.size();
+    int count = 0;
+    
+    for (int i = 0; i < n; i++) {
+        int sum = 0;
+        for (int j = i; j < n; j++) {
+            sum += nums[j];
+            if (sum == k) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    vector<int> nums = {1, 1, 1};
+    cout << subarraySumBrute(nums, 2) << endl;  // 2
+    return 0;
+}
+Time Complexity: O(n²)
+Space Complexity: O(1)
+
+Solution – Optimized (Prefix Sum + Hash Map)
+cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+int subarraySum(vector<int>& nums, int k) {
+    unordered_map<int, int> prefixSumCount;
+    prefixSumCount[0] = 1;  // Empty prefix sum
+    
+    int count = 0;
+    int runningSum = 0;
+    
+    for (int num : nums) {
+        runningSum += num;
+        
+        // If (runningSum - k) exists, then subarrays ending here sum to k
+        if (prefixSumCount.find(runningSum - k) != prefixSumCount.end()) {
+            count += prefixSumCount[runningSum - k];
+        }
+        
+        prefixSumCount[runningSum]++;
+    }
+    
+    return count;
+}
+
+int main() {
+    vector<int> nums = {1, 2, 3};
+    cout << subarraySum(nums, 3) << endl;  // 2
+    
+    vector<int> nums2 = {1, 1, 1};
+    cout << subarraySum(nums2, 2) << endl;  // 2
+    
+    return 0;
+}
+Time Complexity: O(n)
+Space Complexity: O(n)
+
+Explanation: For each position, store cumulative sum. If currentSum - k was seen before, those subarrays sum to k. The hash map stores frequency of each prefix sum.
+
+Question 4: Product of Array Except Self
+LeetCode 238 | Difficulty: Medium
+
+Problem Statement
+Given an integer array nums, return an array answer such that answer[i] is equal to the product of all elements of nums except nums[i]. Without using division.
+
+Example Cases
+
+Input	Output
+[1,2,3,4]	[24,12,8,6]
+[-1,1,0,-3,3]	[0,0,9,0,0]
+Constraints
+
+2 ≤ nums.length ≤ 10⁵
+
+-30 ≤ nums[i] ≤ 30
+
+Solution – Brute Force
+cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<int> productExceptSelfBrute(vector<int>& nums) {
+    int n = nums.size();
+    vector<int> result(n, 1);
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                result[i] *= nums[j];
+            }
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    vector<int> nums = {1, 2, 3, 4};
+    auto result = productExceptSelfBrute(nums);
+    for (int x : result) cout << x << " ";  // 24 12 8 6
+    return 0;
+}
+Time Complexity: O(n²)
+Space Complexity: O(1) excluding output
+
+Solution – Optimized (Prefix and Suffix Products)
+cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<int> productExceptSelf(vector<int>& nums) {
+    int n = nums.size();
+    vector<int> result(n, 1);
+    
+    // First pass: left products
+    int leftProduct = 1;
+    for (int i = 0; i < n; i++) {
+        result[i] = leftProduct;
+        leftProduct *= nums[i];
+    }
+    
+    // Second pass: right products
+    int rightProduct = 1;
+    for (int i = n - 1; i >= 0; i--) {
+        result[i] *= rightProduct;
+        rightProduct *= nums[i];
+    }
+    
+    return result;
+}
+
+int main() {
+    vector<int> nums = {1, 2, 3, 4};
+    auto result = productExceptSelf(nums);
+    for (int x : result) cout << x << " ";  // 24 12 8 6
+    
+    cout << endl;
+    
+    // Dry run for [1,2,3,4]:
+    // Left pass: result = [1,1,2,6]
+    // Right pass: result = [1*24=24, 1*12=12, 2*4=8, 6*1=6]
+    
+    return 0;
+}
+Time Complexity: O(n) – two passes
+Space Complexity: O(1) excluding output
+
+Explanation: answer[i] = (product of elements left of i) × (product of elements right of i). Compute left products in first pass, multiply by right products in second pass.
+
+Question 5: Find All Duplicates in an Array
+LeetCode 442 | Difficulty: Medium
+
+Problem Statement
+Given an integer array nums of length n where each integer is between 1 and n, some elements appear twice. Find all elements that appear twice. Do it in O(n) time and O(1) extra space.
+
+Example Cases
+
+Input	Output
+[4,3,2,7,8,2,3,1]	[2,3]
+[1,1,2]	[1]
+Constraints
+
+n == nums.length
+
+1 ≤ n ≤ 10⁵
+
+1 ≤ nums[i] ≤ n
+
+Solution – Brute Force
+cpp
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+using namespace std;
+
+vector<int> findDuplicatesBrute(vector<int>& nums) {
+    unordered_set<int> seen;
+    vector<int> result;
+    
+    for (int num : nums) {
+        if (seen.find(num) != seen.end()) {
+            result.push_back(num);
+        } else {
+            seen.insert(num);
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    vector<int> nums = {4, 3, 2, 7, 8, 2, 3, 1};
+    auto result = findDuplicatesBrute(nums);
+    for (int x : result) cout << x << " ";  // 2 3
+    return 0;
+}
+Time Complexity: O(n)
+Space Complexity: O(n) – violates O(1) requirement
+
+Solution – Optimized (Marking with Negatives)
+cpp
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+vector<int> findDuplicates(vector<int>& nums) {
+    vector<int> result;
+    
+    for (int i = 0; i < nums.size(); i++) {
+        int index = abs(nums[i]) - 1;
+        
+        if (nums[index] < 0) {
+            // Already marked negative → this is a duplicate
+            result.push_back(abs(nums[i]));
+        } else {
+            // Mark as visited by making negative
+            nums[index] = -nums[index];
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    vector<int> nums = {4, 3, 2, 7, 8, 2, 3, 1};
+    auto result = findDuplicates(nums);
+    for (int x : result) cout << x << " ";  // 2 3
+    
+    cout << endl;
+    
+    // Dry run for first few steps:
+    // i=0: num=4, index=3, nums[3]=7 (positive) → set to -7
+    // i=1: num=3, index=2, nums[2]=2 (positive) → set to -2
+    // i=2: num=2, index=1, nums[1]=3 (positive) → set to -3
+    // i=3: num=7, index=6, nums[6]=1 (positive) → set to -1
+    // i=4: num=8, index=7, nums[7]=1 (positive) → set to -1
+    // i=5: num=2, index=1, nums[1]=-3 (negative) → duplicate! add 2
+    // i=6: num=3, index=2, nums[2]=-2 (negative) → duplicate! add 3
+    
+    return 0;
+}
+Time Complexity: O(n) – single pass
+Space Complexity: O(1) excluding output
+
+Explanation: Since numbers are between 1 and n, use array indices as markers. When seeing a number, mark its corresponding index as negative. 
+If already negative, the number is a duplicate.

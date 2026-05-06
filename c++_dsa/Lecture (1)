@@ -1,0 +1,2247 @@
+
+Understanding the Problem Before the Solution
+Procedural programming works. For small programs, it is the right choice. 
+But as programs grow, procedural code becomes difficult to manage. This chapter shows why that happens and how object-oriented programming solves those problems.
+
+1.1 The Procedural Programming Model
+Procedural programming organizes code around functions. Data is stored in variables. 
+Functions operate on that data. Below is a complete banking program written 
+procedurally. It handles one account.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Global variables for a single account
+string accountOwner = "";
+double accountBalance = 0.0;
+
+void createAccount(string owner) {
+    accountOwner = owner;
+    accountBalance = 0.0;
+    cout << "Account created for " << owner << endl;
+}
+
+void deposit(double amount) {
+    accountBalance = accountBalance + amount;
+    cout << "Deposited " << amount << ". New balance: " << accountBalance << endl;
+}
+
+bool withdraw(double amount) {
+    if (amount <= accountBalance) {
+        accountBalance = accountBalance - amount;
+        cout << "Withdrew " << amount << ". New balance: " << accountBalance << endl;
+        return true;
+    } else {
+        cout << "Insufficient funds" << endl;
+        return false;
+    }
+}
+
+double getBalance() {
+    return accountBalance;
+}
+
+int main() {
+    createAccount("Alice");
+    deposit(100.0);
+    withdraw(30.0);
+    cout << "Final balance: " << getBalance() << endl;
+    return 0;
+}
+Output:
+
+text
+Account created for Alice
+Deposited 100. New balance: 100
+Withdrew 30. New balance: 70
+Final balance: 70
+The code works. Each function modifies the global accountBalance. The functions and data are separate but connected through global variables. This is simple and readable.
+
+1.2 The Breaking Point
+Now add a second account. Without classes, the programmer must duplicate 
+variables and pass them carefully to each function.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Account 1
+string account1Owner = "";
+double account1Balance = 0.0;
+
+// Account 2
+string account2Owner = "";
+double account2Balance = 0.0;
+
+void createAccount(int accountNum, string owner) {
+    if (accountNum == 1) {
+        account1Owner = owner;
+        account1Balance = 0.0;
+        cout << "Account 1 created for " << owner << endl;
+    } else {
+        account2Owner = owner;
+        account2Balance = 0.0;
+        cout << "Account 2 created for " << owner << endl;
+    }
+}
+
+void deposit(int accountNum, double amount) {
+    if (accountNum == 1) {
+        account1Balance = account1Balance + amount;
+        cout << "Deposited " << amount << " to account 1. Balance: " << account1Balance << endl;
+    } else {
+        account2Balance = account2Balance + amount;
+        cout << "Deposited " << amount << " to account 2. Balance: " << account2Balance << endl;
+    }
+}
+
+bool withdraw(int accountNum, double amount) {
+    if (accountNum == 1) {
+        if (amount <= account1Balance) {
+            account1Balance = account1Balance - amount;
+            cout << "Withdrew " << amount << " from account 1. Balance: " << account1Balance << endl;
+            return true;
+        }
+    } else {
+        if (amount <= account2Balance) {
+            account2Balance = account2Balance - amount;
+            cout << "Withdrew " << amount << " from account 2. Balance: " << account2Balance << endl;
+            return true;
+        }
+    }
+    cout << "Insufficient funds" << endl;
+    return false;
+}
+
+double getBalance(int accountNum) {
+    if (accountNum == 1) {
+        return account1Balance;
+    } else {
+        return account2Balance;
+    }
+}
+
+int main() {
+    createAccount(1, "Alice");
+    createAccount(2, "Bob");
+    
+    deposit(1, 100.0);
+    deposit(2, 50.0);
+    
+    withdraw(1, 30.0);
+    
+    cout << "Alice balance: " << getBalance(1) << endl;
+    cout << "Bob balance: " << getBalance(2) << endl;
+    
+    return 0;
+}
+The problems are immediate:
+
+Every function needs an accountNum parameter
+
+Adding a third account means adding account3Owner, account3Balance, and modifying every function
+
+The programmer must track which balance belongs with which owner
+
+Functions are disconnected from the data they operate on
+
+Code duplication grows with each new account
+
+This is the breaking point. At this scale, procedural programming becomes unmanageable.
+
+1.3 Introducing the Class
+A class is a blueprint that bundles data with the functions that operate on that 
+data. The data becomes member variables. The functions become member functions 
+(also called methods).
+
+Below is the banking program rewritten as a class.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class BankAccount {
+private:
+    string owner;
+    double balance;
+    
+public:
+    // Constructor - runs when a new account is created
+    BankAccount(string accountOwner) {
+        owner = accountOwner;
+        balance = 0.0;
+        cout << "Account created for " << owner << endl;
+    }
+    
+    void deposit(double amount) {
+        balance = balance + amount;
+        cout << "Deposited " << amount << " to " << owner;
+        cout << ". Balance: " << balance << endl;
+    }
+    
+    bool withdraw(double amount) {
+        if (amount <= balance) {
+            balance = balance - amount;
+            cout << "Withdrew " << amount << " from " << owner;
+            cout << ". Balance: " << balance << endl;
+            return true;
+        } else {
+            cout << "Insufficient funds for " << owner << endl;
+            return false;
+        }
+    }
+    
+    double getBalance() {
+        return balance;
+    }
+    
+    string getOwner() {
+        return owner;
+    }
+};
+
+int main() {
+    BankAccount alice("Alice");
+    BankAccount bob("Bob");
+    
+    alice.deposit(100.0);
+    bob.deposit(50.0);
+    
+    alice.withdraw(30.0);
+    
+    cout << alice.getOwner() << " balance: " << alice.getBalance() << endl;
+    cout << bob.getOwner() << " balance: " << bob.getBalance() << endl;
+    
+    return 0;
+}
+Output:
+
+text
+Account created for Alice
+Account created for Bob
+Deposited 100 to Alice. Balance: 100
+Deposited 50 to Bob. Balance: 50
+Withdrew 30 from Alice. Balance: 70
+Alice balance: 70
+Bob balance: 50
+Explanation of each part:
+
+Syntax	Meaning
+class BankAccount { ... };	Creates a new class named BankAccount. 
+Note the semicolon after the closing brace.
+private:	Members inside this section cannot be accessed from outside the class
+public:	Members inside this section can be accessed from anywhere
+string owner; double balance;	Member variables (data) belonging to each BankAccount object
+BankAccount(string accountOwner)	Constructor – runs automatically when a new object is created
+balance = 0.0;	Initializes the member variable
+void deposit(double amount)	A member function that operates on the object's data
+The member functions can directly access owner and balance without any global 
+variables. Each BankAccount object has its own copy of owner and balance.
+
+1.4 Creating and Using Objects
+An object (also called an instance) is one specific entity created from a class. 
+Creating an object is calling the constructor.
+
+cpp
+int main() {
+    // Creating two separate objects
+    BankAccount account1("Alice");   // Object 1
+    BankAccount account2("Bob");     // Object 2
+    
+    // Each object has its own balance
+    account1.deposit(100);   // Alice's balance becomes 100
+    account2.deposit(50);    // Bob's balance becomes 50
+    
+    // The dot operator accesses member functions
+    cout << account1.getBalance() << endl;  // 100
+    cout << account2.getBalance() << endl;  // 50
+    
+    return 0;
+}
+Output:
+
+text
+Account created for Alice
+Account created for Bob
+Deposited 100 to Alice. Balance: 100
+Deposited 50 to Bob. Balance: 50
+100
+50
+Each object maintains its own data. The class defines the blueprint once. Many objects can be created from that blueprint.
+
+1.5 Key Vocabulary
+Term	Definition	Example
+Class	A blueprint that defines data and behavior	class BankAccount { ... };
+Object	A specific entity created from a class	BankAccount alice("Alice");
+Instance	Another word for object	alice is an instance of BankAccount
+Member Variable	A variable declared inside a class	double balance;
+Member Function	A function declared inside a class	void deposit(double amount)
+Constructor	A special member function that initializes new objects	BankAccount(string owner)
+1.6 Chapter Summary
+Procedural programming separates data from functions, causing confusion when multiple similar items exist
+
+Adding a second account in procedural code requires duplicating variables and modifying every function
+
+A class bundles data (member variables) with behavior (member functions)
+
+The private: section hides data from outside access
+
+The public: section exposes the interface that other code can use
+
+A constructor runs automatically when an object is created
+
+The dot operator (.) accesses member functions of an object
+
+Many objects can be created from one class, each with its own data
+
+1.7 Check Your Understanding
+Question 1: What is the difference between a class and an object?
+
+Answer: A class is a blueprint or template. An object is a specific instance created from that blueprint.
+
+Question 2: What keyword makes member variables inaccessible from outside the class?
+
+Answer: private:
+
+Question 3: What is the purpose of a constructor?
+
+Answer: A constructor initializes member variables when a new object is created. 
+It runs automatically.
+
+Question 4: What symbol is used to access member functions of an object?
+
+Answer: The dot operator (.)
+
+Question 5: In the procedural two-account example, what happened every time a new account was added?
+
+Answer: New global variables had to be added for that account, and every function had to be modified to handle the new account number.
+
+1.8 Hands-on Exercises
+Exercise 1: Add a transfer member function to the BankAccount class. 
+The function should take another BankAccount object (by reference) and an amount. 
+It should withdraw from the current account and deposit into the other account.
+
+Solution:
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class BankAccount {
+private:
+    string owner;
+    double balance;
+    
+public:
+    BankAccount(string accountOwner) {
+        owner = accountOwner;
+        balance = 0.0;
+    }
+    
+    void deposit(double amount) {
+        balance = balance + amount;
+    }
+    
+    bool withdraw(double amount) {
+        if (amount <= balance) {
+            balance = balance - amount;
+            return true;
+        }
+        return false;
+    }
+    
+    double getBalance() {
+        return balance;
+    }
+    
+    string getOwner() {
+        return owner;
+    }
+    
+    void transfer(BankAccount& target, double amount) {
+        if (withdraw(amount)) {
+            target.deposit(amount);
+            cout << "Transferred " << amount << " from " << owner;
+            cout << " to " << target.getOwner() << endl;
+        } else {
+            cout << "Transfer failed: insufficient funds in " << owner << endl;
+        }
+    }
+};
+
+int main() {
+    BankAccount alice("Alice");
+    BankAccount bob("Bob");
+    
+    alice.deposit(100);
+    alice.transfer(bob, 40);
+    
+    cout << "Alice balance: " << alice.getBalance() << endl;  // 60
+    cout << "Bob balance: " << bob.getBalance() << endl;      // 40
+    
+    return 0;
+}
+Output:
+
+text
+Transferred 40 from Alice to Bob
+Alice balance: 60
+Bob balance: 40
+Exercise 2: Create a class Rectangle with private member 
+variables width and height. Add a constructor that takes both values. 
+Add member functions area(), perimeter(), and isSquare() 
+(returns true if width equals height).
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Rectangle {
+private:
+    double width;
+    double height;
+    
+public:
+    Rectangle(double w, double h) {
+        width = w;
+        height = h;
+    }
+    
+    double area() {
+        return width * height;
+    }
+    
+    double perimeter() {
+        return 2 * (width + height);
+    }
+    
+    bool isSquare() {
+        return width == height;
+    }
+};
+
+int main() {
+    Rectangle rect1(5, 3);
+    Rectangle rect2(4, 4);
+    
+    cout << "Rect1 area: " << rect1.area() << endl;           // 15
+    cout << "Rect1 perimeter: " << rect1.perimeter() << endl; // 16
+    cout << "Rect1 is square: " << rect1.isSquare() << endl;  // 0 (false)
+    
+    cout << "Rect2 area: " << rect2.area() << endl;           // 16
+    cout << "Rect2 perimeter: " << rect2.perimeter() << endl; // 16
+    cout << "Rect2 is square: " << rect2.isSquare() << endl;  // 1 (true)
+    
+    return 0;
+}
+Exercise 3: Create a class Counter with a private member variable count. 
+The constructor should set count to 0. Add member functions 
+increment(), decrement(), reset(), and getCount(). 
+The decrement function should not allow negative counts 
+(if count is 0, decrement does nothing).
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Counter {
+private:
+    int count;
+    
+public:
+    Counter() {
+        count = 0;
+    }
+    
+    void increment() {
+        count = count + 1;
+        cout << "Count: " << count << endl;
+    }
+    
+    void decrement() {
+        if (count > 0) {
+            count = count - 1;
+        }
+        cout << "Count: " << count << endl;
+    }
+    
+    void reset() {
+        count = 0;
+        cout << "Count reset to 0" << endl;
+    }
+    
+    int getCount() {
+        return count;
+    }
+};
+
+int main() {
+    Counter c;
+    
+    c.increment();  // Count: 1
+    c.increment();  // Count: 2
+    c.decrement();  // Count: 1
+    c.decrement();  // Count: 0
+    c.decrement();  // Count: 0 (no negative)
+    c.reset();      // Count reset to 0
+    
+    return 0;
+}
+Chapter 2: Classes – Basics
+Writing Your First C++ Class
+Creating a class in C++ requires attention to syntax details that differ from other languages. This chapter covers the fundamental building blocks.
+
+2.1 Class Syntax in C++
+A class definition has three required parts: 
+the class keyword, the class body inside braces, 
+and a semicolon after the closing brace.
+
+cpp
+class ClassName {
+    // Member variables and functions go here
+};  // Semicolon is REQUIRED
+The most common beginner error is forgetting the semicolon.
+
+cpp
+// WRONG - missing semicolon
+class Dog {
+    string name;
+}
+
+// RIGHT
+class Dog {
+    string name;
+};  // Semicolon here
+Class members are organized into sections using access specifiers.
+
+cpp
+class BankAccount {
+private:
+    // Only member functions of this class can access these
+    double balance;
+    
+public:
+    // Any code can access these
+    void deposit(double amount);
+};
+Multiple access specifiers can appear in any order. The same specifier can appear multiple times.
+
+2.2 Member Variables (Attributes)
+Member variables store the data for each object. 
+By convention, member variables are placed in the private: section.
+
+Naming conventions for member variables:
+
+Convention	Example	Notes
+m_ prefix	m_balance, m_owner	Common in many C++ codebases
+Trailing underscore	balance_, owner_	Used in Google style guide
+No prefix (but different from parameters)	balance, owner	Relies on this-> or naming discipline
+This book uses the trailing underscore convention. It clearly distinguishes member variables from local variables and function parameters.
+
+cpp
+class Person {
+private:
+    string name_;    // Trailing underscore indicates member variable
+    int age_;
+    
+public:
+    void setName(string name) {
+        name_ = name;   // Clear distinction: parameter 'name', member 'name_'
+    }
+};
+2.3 Member Functions (Methods)
+Member functions can be defined inside the class body. Inside a member function, member variables are accessed directly by name.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Dog {
+private:
+    string name_;
+    int age_;
+    
+public:
+    void setName(string name) {
+        name_ = name;
+    }
+    
+    void setAge(int age) {
+        age_ = age;
+    }
+    
+    void bark() {
+        cout << name_ << " says Woof!" << endl;
+    }
+    
+    void introduce() {
+        cout << "I am " << name_ << ", age " << age_ << endl;
+    }
+};
+
+int main() {
+    Dog fido;
+    fido.setName("Fido");
+    fido.setAge(3);
+    fido.bark();        // Fido says Woof!
+    fido.introduce();   // I am Fido, age 3
+    
+    return 0;
+}
+Member functions have direct access to the member variables of 
+the object they are called on. When fido.bark() executes, 
+name_ refers to fido.name_.
+
+2.4 The Constructor
+A constructor is a special member function that runs automatically 
+when an object is created. It has the same name as the class and 
+no return type (not even void).
+
+cpp
+class Student {
+private:
+    string name_;
+    int grade_;
+    
+public:
+    // Constructor - same name as class, no return type
+    Student(string name, int grade) {
+        name_ = name;
+        grade_ = grade;
+        cout << "Student created: " << name_ << endl;
+    }
+    
+    void display() {
+        cout << name_ << " has grade " << grade_ << endl;
+    }
+};
+
+int main() {
+    Student alice("Alice", 85);  // Constructor runs here
+    Student bob("Bob", 92);      // Constructor runs here
+    
+    alice.display();  // Alice has grade 85
+    bob.display();    // Bob has grade 92
+    
+    return 0;
+}
+Default constructor: A constructor that takes no 
+parameters. If no constructor is written, the compiler 
+provides an empty default constructor (which does nothing).
+
+cpp
+class Simple {
+    // Compiler provides: Simple() { }
+};
+
+class WithCustom {
+public:
+    // Custom constructor - compiler no longer provides default
+    WithCustom(int value) {
+        // ...
+    }
+};
+
+int main() {
+    Simple s;           // OK - compiler-generated default constructor
+    // WithCustom w;    // ERROR - no default constructor available
+    WithCustom w(10);   // OK - custom constructor exists
+    
+    return 0;
+}
+Constructor initializer list 
+(preferred over assignment inside the constructor body):
+
+cpp
+class Student {
+private:
+    string name_;
+    int grade_;
+    
+public:
+    // Initializer list - more efficient, required for const members
+    Student(string name, int grade) : name_(name), grade_(grade) {
+        // Constructor body - usually empty or minimal
+        cout << "Student created: " << name_ << endl;
+    }
+};
+The initializer list runs before the constructor body. 
+It is the preferred way to initialize member variables.
+
+2.5 Creating Objects
+Objects are created on the stack (not using new) for now. 
+Stack allocation is simple and automatic.
+
+cpp
+class Car {
+public:
+    string model_;
+    int year_;
+    
+    void display() {
+        cout << year_ << " " << model_ << endl;
+    }
+};
+
+int main() {
+    // Stack allocation - object created directly
+    Car myCar;           // Default constructor runs
+    myCar.model_ = "Toyota";
+    myCar.year_ = 2022;
+    
+    // Another object
+    Car yourCar;
+    yourCar.model_ = "Honda";
+    yourCar.year_ = 2023;
+    
+    myCar.display();    // 2022 Toyota
+    yourCar.display();  // 2023 Honda
+    
+    return 0;
+}
+The dot operator (.) accesses members of an object.
+
+Syntax	Meaning
+object.memberVariable	Access a member variable
+object.memberFunction()	Call a member function
+2.6 Getters and Setters
+Getters (accessors) provide read-only access to private member variables. They are marked const because they do not modify the object.
+
+Setters (mutators) provide controlled write access to private member variables. They can validate input before changing the value.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Product {
+private:
+    string name_;
+    double price_;
+    
+public:
+    Product(string name, double price) : name_(name), price_(price) {}
+    
+    // Getter - const means this function does not modify the object
+    string getName() const {
+        return name_;
+    }
+    
+    double getPrice() const {
+        return price_;
+    }
+    
+    // Setter with validation
+    void setPrice(double newPrice) {
+        if (newPrice >= 0) {
+            price_ = newPrice;
+        } else {
+            cout << "Error: Price cannot be negative" << endl;
+        }
+    }
+};
+
+int main() {
+    Product laptop("Laptop", 999.99);
+    
+    cout << "Product: " << laptop.getName() << endl;      // Laptop
+    cout << "Price: $" << laptop.getPrice() << endl;      // 999.99
+    
+    laptop.setPrice(1099.99);
+    cout << "New price: $" << laptop.getPrice() << endl;  // 1099.99
+    
+    laptop.setPrice(-50);  // Error: Price cannot be negative
+    
+    return 0;
+}
+The const keyword on member functions promises that the function will not modify any member variables. A const member function can be called on const objects.
+
+cpp
+class Example {
+private:
+    int value_;
+    
+public:
+    int getValue() const {
+        return value_;   // OK - reading only
+    }
+    
+    void setValue(int v) {
+        value_ = v;      // OK - modifies, so cannot be const
+    }
+};
+
+int main() {
+    const Example e;     // const object
+    // e.setValue(10);   // ERROR - cannot call non-const function on const object
+    cout << e.getValue(); // OK - getValue is const
+    
+    return 0;
+}
+2.7 Chapter Summary
+A class definition requires a semicolon after the closing brace
+
+Member variables are typically private: and use a naming convention (this book uses trailing underscore)
+
+Member functions are typically public: and define the class interface
+
+A constructor has the same name as the class and no return type
+
+The constructor initializer list (colon syntax) is preferred over assignment in the constructor body
+
+Objects are created on the stack with simple declaration syntax
+
+The dot operator (.) accesses object members
+
+Getters provide read access and should be const
+
+Setters provide controlled write access with optional validation
+
+2.8 Check Your Understanding
+Question 1: What is the most common syntax error when writing a class in C++?
+
+Answer: Forgetting the semicolon after the closing brace of the class definition.
+
+Question 2: What is the difference between a member variable and a local variable?
+
+Answer: A member variable belongs to an object and persists for the lifetime of 
+the object. A local variable exists only while the function is executing.
+
+Question 3: Why are getters marked with const?
+
+Answer: To indicate that the function does not modify the object, 
+and to allow the function to be called on const objects.
+
+Question 4: What is a constructor initializer list?
+
+Answer: A list after the colon in a constructor definition that initializes 
+member variables before the constructor body runs.
+
+Question 5: What happens if a class has a custom constructor and no default constructor?
+
+Answer: The compiler no longer provides a default constructor. Objects of that class must be created with arguments matching the custom constructor.
+
+2.9 Hands-on Exercises
+Exercise 1: Create a class Book with private member variables title_, 
+author_, and year_. Add a constructor that initializes all three. Add getters for each member variable. Add a display() function that prints all book information.
+
+Solution:
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Book {
+private:
+    string title_;
+    string author_;
+    int year_;
+    
+public:
+    Book(string title, string author, int year)
+        : title_(title), author_(author), year_(year) {}
+    
+    string getTitle() const { return title_; }
+    string getAuthor() const { return author_; }
+    int getYear() const { return year_; }
+    
+    void display() const {
+        cout << "\"" << title_ << "\" by " << author_;
+        cout << " (" << year_ << ")" << endl;
+    }
+};
+
+int main() {
+    Book book1("1984", "George Orwell", 1949);
+    Book book2("To Kill a Mockingbird", "Harper Lee", 1960);
+    
+    book1.display();  // "1984" by George Orwell (1949)
+    book2.display();  // "To Kill a Mockingbird" by Harper Lee (1960)
+    
+    return 0;
+}
+Exercise 2: Add a setter for the year_ member variable in the Book class. The setter should validate that the year is between 1450 (first printed book) and the current year (use 2025 as the upper bound).
+
+Solution:
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Book {
+private:
+    string title_;
+    string author_;
+    int year_;
+    
+public:
+    Book(string title, string author, int year)
+        : title_(title), author_(author), year_(year) {}
+    
+    string getTitle() const { return title_; }
+    string getAuthor() const { return author_; }
+    int getYear() const { return year_; }
+    
+    void setYear(int newYear) {
+        if (newYear >= 1450 && newYear <= 2025) {
+            year_ = newYear;
+        } else {
+            cout << "Invalid year: " << newYear << ". Year must be between 1450 and 2025." << endl;
+        }
+    }
+    
+    void display() const {
+        cout << "\"" << title_ << "\" by " << author_;
+        cout << " (" << year_ << ")" << endl;
+    }
+};
+
+int main() {
+    Book book("1984", "George Orwell", 1949);
+    book.display();          // "1984" by George Orwell (1949)
+    
+    book.setYear(1950);
+    book.display();          // "1984" by George Orwell (1950)
+    
+    book.setYear(1400);      // Invalid year: 1400. Year must be between 1450 and 2025.
+    
+    return 0;
+}
+Exercise 3: Create a class Thermostat with a private member variable temperature_ (in Celsius). The constructor should set an initial temperature. Add a getter getTemperature() (const) and a setter setTemperature() that only allows values between 10 and 30 degrees Celsius. Add a member function display() that shows the temperature with a "Hot", "Cold", or "Comfortable" label (above 25 = Hot, below 18 = Cold, otherwise Comfortable).
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Thermostat {
+private:
+    double temperature_;
+    
+public:
+    Thermostat(double initialTemp) : temperature_(initialTemp) {}
+    
+    double getTemperature() const {
+        return temperature_;
+    }
+    
+    void setTemperature(double newTemp) {
+        if (newTemp >= 10.0 && newTemp <= 30.0) {
+            temperature_ = newTemp;
+        } else {
+            cout << "Temperature " << newTemp << " is out of range (10-30). Setting not changed." << endl;
+        }
+    }
+    
+    void display() const {
+        cout << "Temperature: " << temperature_ << "°C - ";
+        
+        if (temperature_ > 25.0) {
+            cout << "Hot" << endl;
+        } else if (temperature_ < 18.0) {
+            cout << "Cold" << endl;
+        } else {
+            cout << "Comfortable" << endl;
+        }
+    }
+};
+
+int main() {
+    Thermostat thermo(22.5);
+    thermo.display();              // Temperature: 22.5°C - Comfortable
+    
+    thermo.setTemperature(28.0);
+    thermo.display();              // Temperature: 28°C - Hot
+    
+    thermo.setTemperature(15.0);
+    thermo.display();              // Temperature: 15°C - Cold
+    
+    thermo.setTemperature(35.0);   // Temperature 35 is out of range (10-30). Setting not changed.
+    thermo.display();              // Still 15°C - Cold
+    
+    return 0;
+}
+
+
+Chapter 4: The this Pointer
+How Member Functions Know Which Object to Modify
+Every member function in C++ receives a hidden pointer to the 
+object it was called on. This pointer is named this. Understanding this 
+explains how one function definition can work with many objects.
+
+4.1 The Problem
+A class defines member functions once. Many objects exist. 
+When alice.deposit(100) is called, how 
+does the deposit function know to modify alice's balance, not bob's?
+
+cpp
+class BankAccount {
+private:
+    double balance_;
+    
+public:
+    void deposit(double amount) {
+        // Which balance does this modify?
+        balance_ = balance_ + amount;
+    }
+};
+
+int main() {
+    BankAccount alice, bob;
+    alice.deposit(100);  // Modifies alice's balance
+    bob.deposit(50);     // Modifies bob's balance
+    
+    return 0;
+}
+The answer is the this pointer.
+
+4.2 The Solution: The this Pointer
+When a member function is called, the compiler 
+automatically passes a hidden argument: a pointer 
+to the object on which the function was called.
+
+cpp
+// What the programmer writes
+alice.deposit(100);
+
+// What the compiler generates (conceptually)
+BankAccount::deposit(&alice, 100);
+Inside the member function, this hidden pointer is accessible as this. 
+The this pointer always points to the current object.
+
+cpp
+class BankAccount {
+private:
+    double balance_;
+    
+public:
+    void deposit(double amount) {
+        // this points to the object being modified
+        this->balance_ = this->balance_ + amount;
+    }
+};
+The compiler treats a plain member variable access like balance_ as this->balance_. The two forms are identical.
+
+4.3 Proving this Exists
+The address stored in this is the same as the address of the object.
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Demo {
+public:
+    void showAddress() {
+        cout << "this points to: " << this << endl;
+    }
+};
+
+int main() {
+    Demo obj1;
+    Demo obj2;
+    
+    cout << "Address of obj1: " << &obj1 << endl;
+    obj1.showAddress();
+    
+    cout << "Address of obj2: " << &obj2 << endl;
+    obj2.showAddress();
+    
+    return 0;
+}
+Output (addresses will vary):
+
+text
+Address of obj1: 0x7ffd1234abc0
+this points to: 0x7ffd1234abc0
+Address of obj2: 0x7ffd1234abc8
+this points to: 0x7ffd1234abc8
+The this pointer contains the address of the object. Each call receives a different this value.
+
+4.4 Using this Explicitly
+Explicit this is not required most of the time, 
+but it is necessary when a parameter name shadows a member variable.
+
+cpp
+class Person {
+private:
+    string name_;
+    int age_;
+    
+public:
+    // Problem: Parameter name same as member variable
+    void setName(string name) {
+        // Which name? The parameter or the member?
+        name = name;  // Wrong - assigns parameter to itself
+    }
+    
+    // Solution: Use this to disambiguate
+    void setNameCorrect(string name) {
+        this->name_ = name;  // this->name_ is the member variable
+    }
+    
+    // Alternative: Different parameter name (also works)
+    void setNameAlternative(string newName) {
+        name_ = newName;
+    }
+};
+When explicit this is needed:
+
+Scenario	Why
+Parameter shadows member	To distinguish this->member from parameter
+Returning the object itself	To enable method chaining (see next section)
+Passing the current object to another function	To provide a pointer to the current object
+4.5 Returning *this from Member Functions
+Dereferencing this (using *this) produces a reference to the current object. Returning *this enables method chaining – calling multiple member functions in sequence.
+
+cpp
+class Calculator {
+private:
+    int value_;
+    
+public:
+    Calculator() : value_(0) {}
+    
+    Calculator& add(int x) {
+        value_ = value_ + x;
+        return *this;  // Return reference to current object
+    }
+    
+    Calculator& subtract(int x) {
+        value_ = value_ - x;
+        return *this;
+    }
+    
+    int getValue() const {
+        return value_;
+    }
+};
+
+int main() {
+    Calculator calc;
+    
+    // Traditional style
+    calc.add(5);
+    calc.subtract(2);
+    
+    // Method chaining (possible because each function returns *this)
+    calc.add(10).subtract(3).add(7);
+    
+    cout << calc.getValue() << endl;  // 5 - 2 + 10 - 3 + 7 = 17
+    
+    return 0;
+}
+How method chaining works:
+
+calc.add(10) returns *this (reference to calc)
+
+That reference calls subtract(3) on the same calc
+
+That returns *this again
+
+That reference calls add(7)
+
+Method chaining is common in libraries like the C++ iostream library 
+(cout << x << y << z) and in builder patterns.
+
+4.6 Chapter Summary
+this is a hidden pointer available inside every non-static member function
+
+this points to the object on which the member function was called
+
+Member variable access balance_ is equivalent to this->balance_
+
+Explicit this is needed when a parameter names shadows a member variable
+
+*this dereferences the pointer to get the object itself
+
+Returning *this from a member function enables method chaining
+
+this is a pointer, not a reference (cannot change what it points to)
+
+4.7 Check Your Understanding
+Question 1: What does this point to inside a member function?
+
+Answer: this points to the object on which the member function was called.
+
+Question 2: Is this a pointer or a reference?
+
+Answer: this is a pointer.
+
+Question 3: When is explicit this-> required?
+
+Answer: When a parameter name shadows a member variable name, or when the current object needs to be passed to another function.
+
+Question 4: What does *this represent?
+
+Answer: *this dereferences the this pointer, giving the actual object (not a pointer to it).
+
+Question 5: How does method chaining work?
+
+Answer: Each member function returns *this (a reference to the current object), allowing sequential calls to be chained with dot operators.
+
+4.8 Hands-on Exercises
+Exercise 1: Write a class Timer with a private member variable 
+seconds_. Add member functions tick() (adds 1 second) and reset() 
+(sets seconds to 0). Make both return *this. In main(), 
+chain three tick() calls followed by a reset() and show the final value.
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Timer {
+private:
+    int seconds_;
+    
+public:
+    Timer() : seconds_(0) {}
+    
+    Timer& tick() {
+        seconds_ = seconds_ + 1;
+        return *this;
+    }
+    
+    Timer& reset() {
+        seconds_ = 0;
+        return *this;
+    }
+    
+    int getSeconds() const {
+        return seconds_;
+    }
+};
+
+int main() {
+    Timer t;
+    
+    t.tick().tick().tick();
+    cout << "After 3 ticks: " << t.getSeconds() << endl;  // 3
+    
+    t.reset().tick().tick();
+    cout << "After reset then 2 ticks: " << t.getSeconds() << endl;  // 2
+    
+    return 0;
+}
+Exercise 2: Add a member function setValue(int v) to the Calculator 
+class from section 4.5 that sets value_ and returns *this. 
+Demonstrate chaining setValue, add, and subtract.
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Calculator {
+private:
+    int value_;
+    
+public:
+    Calculator() : value_(0) {}
+    
+    Calculator& setValue(int v) {
+        value_ = v;
+        return *this;
+    }
+    
+    Calculator& add(int x) {
+        value_ = value_ + x;
+        return *this;
+    }
+    
+    Calculator& subtract(int x) {
+        value_ = value_ - x;
+        return *this;
+    }
+    
+    int getValue() const {
+        return value_;
+    }
+};
+
+int main() {
+    Calculator calc;
+    
+    int result = calc.setValue(100)
+                    .add(25)
+                    .subtract(10)
+                    .add(5)
+                    .getValue();
+    
+    cout << "Result: " << result << endl;  // 120
+    
+    return 0;
+}
+Exercise 3: In the following buggy code, the constructor 
+parameter shadows the member variable. Fix it using this->.
+
+cpp
+class Student {
+private:
+    string name;
+    int grade;
+    
+public:
+    Student(string name, int grade) {
+        name = name;   // Bug: assigns parameter to itself
+        grade = grade; // Bug: assigns parameter to itself
+    }
+};
+Solution:
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Student {
+private:
+    string name_;
+    int grade_;
+    
+public:
+    Student(string name, int grade) {
+        this->name_ = name;   // Explicit this fixes the shadowing
+        this->grade_ = grade;
+    }
+    
+    void display() const {
+        cout << name_ << ": " << grade_ << endl;
+    }
+};
+
+int main() {
+    Student s("Alice", 95);
+    s.display();  // Alice: 95
+    
+    return 0;
+}
+Note: The trailing underscore naming convention (used in this book) naturally avoids shadowing because member variables have underscores and parameters do not. The bug would not occur with that convention.
+
+Chapter 5: Constructors – Deep Dive
+Initializing Objects Correctly
+Constructors do more than just set initial values. They establish class invariants – conditions that must be true for the object to be valid. This chapter covers the details of proper object initialization.
+
+5.1 Default Constructor
+A default constructor is a constructor that can be called with no arguments. It can have no parameters, or all parameters can have default values.
+
+cpp
+class Example {
+public:
+    // Default constructor with no parameters
+    Example() {
+        cout << "Default constructor" << endl;
+    }
+};
+
+class Another {
+public:
+    // Default constructor with default parameter
+    Another(int value = 0) {  // Can be called with no arguments
+        cout << "Constructed with " << value << endl;
+    }
+};
+
+int main() {
+    Example e1;        // Calls default constructor
+    Example e2 = Example();  // Also calls default constructor
+    
+    Another a1;        // Calls Another(0)
+    Another a2(42);    // Calls Another(42)
+    
+    return 0;
+}
+If no constructor is written, the compiler generates a default 
+constructor that does nothing.
+
+cpp
+class Simple {
+    // No constructors written
+    int value;
+    // Compiler generates: Simple() {} which leaves value uninitialized
+};
+If any constructor is written, the compiler no longer generates a 
+default constructor.
+
+cpp
+class WithCustom {
+public:
+    WithCustom(int x) { ... }
+    // No default constructor - compiler does not generate one
+};
+
+int main() {
+    // WithCustom w;   // ERROR - no default constructor
+    WithCustom w(10);  // OK - custom constructor exists
+    
+    return 0;
+}
+To explicitly request the compiler-generated default constructor 
+while also having custom constructors:
+
+cpp
+class Person {
+private:
+    string name_;
+    int age_;
+    
+public:
+    // Explicitly defaulted default constructor
+    Person() = default;
+    
+    // Custom constructor
+    Person(string name, int age) : name_(name), age_(age) {}
+};
+
+int main() {
+    Person p1;                 // Uses =default constructor
+    Person p2("Alice", 30);    // Uses custom constructor
+    
+    return 0;
+}
+5.2 Parameterized Constructor
+A parameterized constructor takes arguments to initialize 
+the object with specific values.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Book {
+private:
+    string title_;
+    string author_;
+    int year_;
+    
+public:
+    // Parameterized constructor
+    Book(string title, string author, int year) 
+        : title_(title), author_(author), year_(year) {}
+    
+    void display() {
+        cout << title_ << " by " << author_ << " (" << year_ << ")" << endl;
+    }
+};
+
+int main() {
+    Book b1("1984", "George Orwell", 1949);
+    Book b2("Dune", "Frank Herbert", 1965);
+    
+    b1.display();  // 1984 by George Orwell (1949)
+    b2.display();  // Dune by Frank Herbert (1965)
+    
+    return 0;
+}
+Multiple constructors can exist in the same class through constructor overloading.
+
+cpp
+class Rectangle {
+private:
+    double width_;
+    double height_;
+    
+public:
+    // Default - unit square
+    Rectangle() : width_(1.0), height_(1.0) {}
+    
+    // Parameterized - square of side s
+    Rectangle(double side) : width_(side), height_(side) {}
+    
+    // Parameterized - width and height
+    Rectangle(double width, double height) : width_(width), height_(height) {}
+};
+
+int main() {
+    Rectangle r1;           // Calls Rectangle()
+    Rectangle r2(5);        // Calls Rectangle(double)
+    Rectangle r3(4, 6);     // Calls Rectangle(double, double)
+    
+    return 0;
+}
+5.3 Constructor Initializer List
+The initializer list is the colon (:) followed 
+by comma-separated initializations that runs before the constructor body.
+
+cpp
+ClassName(parameters) : member1(value1), member2(value2) {
+    // Constructor body
+}
+Why the initializer list is preferred:
+
+Reason	Explanation
+Efficiency	Member variables are initialized directly, 
+not default-initialized then assigned
+const members	const members must be initialized in the initializer list
+Reference members	References must be initialized in the initializer list
+No default constructor	If a member has no default constructor, 
+it must be initialized here
+cpp
+class Member {
+public:
+    Member(int x) { cout << "Member constructed with " << x << endl; }
+};
+
+class Container {
+private:
+    const int constantValue_;
+    int& reference_;
+    Member member_;
+    
+public:
+    // const and reference MUST be in initializer list
+    // member_ must be in initializer list (no default constructor)
+    Container(int value, int& externalRef) 
+        : constantValue_(value), 
+          reference_(externalRef),
+          member_(value * 2) {
+        // Body can do additional work
+    }
+};
+Order of initialization is determined by the order members are 
+declared in the class, not the order in the initializer list.
+
+cpp
+class Example {
+private:
+    int a_;
+    int b_;
+    
+public:
+    // Dangerous - b_ is initialized before a_ in memory, regardless of list order
+    Example(int x) : b_(x), a_(b_ + 1) {  // BAD: a_ depends on uninitialized b_
+        // a_ uses b_ before b_ is initialized
+    }
+    
+    // Correct - order matches declaration
+    Example(int x) : a_(x), b_(a_ + 1) {  // GOOD: a_ then b_
+    }
+};
+Rule: Order the initializer list to match the declaration order of member variables.
+
+5.4 Delegating Constructors (C++11)
+A constructor can call another constructor of the same class. 
+This reduces code duplication.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Student {
+private:
+    string name_;
+    int grade_;
+    string major_;
+    
+public:
+    // Full constructor
+    Student(string name, int grade, string major) 
+        : name_(name), grade_(grade), major_(major) {
+        cout << "Student created: " << name_ << ", " << major_ << endl;
+    }
+    
+    // Delegating constructor for unspecified major
+    Student(string name, int grade) 
+        : Student(name, grade, "Undeclared") {  // Delegates to full constructor
+        cout << "Major not specified, defaulted to Undeclared" << endl;
+    }
+    
+    // Delegating constructor for default grade
+    Student(string name) 
+        : Student(name, 0, "Undeclared") {
+        cout << "Grade not specified, defaulted to 0" << endl;
+    }
+};
+
+int main() {
+    Student s1("Alice", 85, "Physics");   // Full constructor
+    Student s2("Bob", 90);                // Delegates to full
+    Student s3("Charlie");                // Delegates twice
+    
+    return 0;
+}
+Output:
+
+text
+Student created: Alice, Physics
+Student created: Bob, Undeclared
+Major not specified, defaulted to Undeclared
+Student created: Charlie, Undeclared
+Major not specified, defaulted to Undeclared
+Grade not specified, defaulted to 0
+
+5.5 Destructor
+A destructor is a special member function that runs when an object is destroyed. 
+It has the same name as the class with a tilde (~) prefix and no parameters or 
+return type.
+
+cpp
+class ResourceHolder {
+private:
+    int* data_;
+    
+public:
+    ResourceHolder(int size) {
+        data_ = new int[size];  // Allocate resources
+        cout << "Resources allocated" << endl;
+    }
+    
+    ~ResourceHolder() {
+        delete[] data_;  // Clean up resources
+        cout << "Resources released" << endl;
+    }
+};
+
+int main() {
+    {
+        ResourceHolder rh(100);  // Constructor runs - resources allocated
+        // Use rh...
+    }  // rh goes out of scope - destructor runs - resources released
+    
+    cout << "After the block" << endl;
+    
+    return 0;
+}
+Output:
+
+text
+Resources allocated
+Resources released
+After the block
+
+
+When destructors run:
+
+When a local object goes out of scope (function ends, block ends)
+
+When an object created with new is deleted (advanced)
+
+In reverse order of construction (members first, then base classes, 
+then the class itself)
+
+The Rule of Three (preview): If a class has a destructor, 
+it likely also needs a copy constructor and copy assignment operator. 
+This is covered in later chapters.
+
+5.6 Chapter Summary
+A default constructor takes no arguments; the compiler provides one only if no constructor is written
+
+The = default syntax requests the compiler to generate a default constructor
+
+Parameterized constructors initialize objects with specific values
+
+Constructor overloading allows multiple constructors with different parameters
+
+The initializer list (colon syntax) is preferred over assignment in the constructor body
+
+const and reference members must be initialized in the initializer list
+
+Member initialization order follows declaration order, not initializer list order
+
+Delegating constructors call other constructors of the same class (C++11)
+
+Destructors clean up resources; they run when objects are destroyed
+
+5.7 Check Your Understanding
+Question 1: What is the difference between a default constructor and a parameterized constructor?
+
+Answer: A default constructor can be called with no arguments. A parameterized constructor requires arguments.
+
+Question 2: What happens if a class has a custom constructor 
+and no default constructor, and the code tries to create an 
+object with no arguments?
+
+Answer: Compilation error – no matching constructor.
+
+Question 3: Why is the initializer list preferred over assignment in the 
+constructor body?
+
+Answer: For efficiency (direct initialization instead of default then assign), 
+and for const members and references which cannot be assigned.
+
+Question 4: In what order are member variables initialized?
+
+Answer: In the order they are declared in the class, not the order in the initializer list.
+
+Question 5: What is the syntax for a delegating constructor?
+
+Answer: In the initializer list, call another constructor: : ClassName(parameters)
+
+5.8 Hands-on Exercises
+Exercise 1: Create a class Date with private member 
+variables day_, month_, year_. Write three constructors:
+
+Default constructor sets date to January 1, 2000
+
+Constructor with month and year only (day defaults to 1)
+
+Full constructor with day, month, year
+Validate that day is appropriate for the month 
+(assume all months have 31 days for simplicity).
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Date {
+private:
+    int day_;
+    int month_;
+    int year_;
+    
+public:
+    // Default: Jan 1, 2000
+    Date() : day_(1), month_(1), year_(2000) {}
+    
+    // Month and year only
+    Date(int month, int year) : day_(1), month_(month), year_(year) {}
+    
+    // Full constructor
+    Date(int day, int month, int year) : day_(day), month_(month), year_(year) {}
+    
+    void display() const {
+        cout << month_ << "/" << day_ << "/" << year_ << endl;
+    }
+};
+
+int main() {
+    Date d1;
+    Date d2(5, 2024);      // May 1, 2024
+    Date d3(15, 12, 2023); // Dec 15, 2023
+    
+    d1.display();  // 1/1/2000
+    d2.display();  // 5/1/2024
+    d3.display();  // 12/15/2023
+    
+    return 0;
+}
+Exercise 2: Create a class DynamicArray that allocates an array of 
+integers in the constructor and deallocates it in the destructor. 
+The constructor should take the array size as a parameter. Add a set 
+and get member function.
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class DynamicArray {
+private:
+    int* data_;
+    int size_;
+    
+public:
+    // Constructor - allocate memory
+    DynamicArray(int size) : size_(size) {
+        data_ = new int[size_];
+        cout << "Allocated array of size " << size_ << endl;
+    }
+    
+    // Destructor - free memory
+    ~DynamicArray() {
+        delete[] data_;
+        cout << "Freed array of size " << size_ << endl;
+    }
+    
+    void set(int index, int value) {
+        if (index >= 0 && index < size_) {
+            data_[index] = value;
+        }
+    }
+    
+    int get(int index) const {
+        if (index >= 0 && index < size_) {
+            return data_[index];
+        }
+        return -1;
+    }
+};
+
+int main() {
+    {
+        DynamicArray arr(5);
+        arr.set(0, 10);
+        arr.set(1, 20);
+        arr.set(2, 30);
+        
+        cout << "arr[1] = " << arr.get(1) << endl;  // 20
+    }  // arr destructor runs here
+    
+    cout << "Array destroyed" << endl;
+    
+    return 0;
+}
+Exercise 3: Add a delegating constructor to the Rectangle class so that Rectangle(double side) delegates to Rectangle(double, double).
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Rectangle {
+private:
+    double width_;
+    double height_;
+    
+public:
+    // Primary constructor
+    Rectangle(double width, double height) 
+        : width_(width), height_(height) {
+        cout << "Rectangle: " << width_ << " x " << height_ << endl;
+    }
+    
+    // Delegating constructor - square
+    Rectangle(double side) : Rectangle(side, side) {}
+    
+    // Delegating constructor - default unit square
+    Rectangle() : Rectangle(1.0, 1.0) {}
+    
+    double area() const {
+        return width_ * height_;
+    }
+};
+
+int main() {
+    Rectangle r1;           // Rectangle: 1 x 1
+    Rectangle r2(5);        // Rectangle: 5 x 5
+    Rectangle r3(4, 6);     // Rectangle: 4 x 6
+    
+    cout << "Area r1: " << r1.area() << endl;  // 1
+    cout << "Area r2: " << r2.area() << endl;  // 25
+    cout << "Area r3: " << r3.area() << endl;  // 24
+    
+    return 0;
+}
+Chapter 6: Encapsulation
+Protecting Data and Controlling Access
+Encapsulation is the principle of hiding internal details and exposing only what is necessary. It prevents external code from putting an object into an invalid state.
+
+6.1 Public vs Private vs Protected
+C++ provides three access specifiers to control visibility of class members.
+
+Specifier	Access from outside class	Access from derived classes	Access from within class
+public	Yes	Yes	Yes
+private	No	No	Yes
+protected	No	Yes	Yes
+cpp
+class AccessDemo {
+public:
+    int publicVar;      // Accessible anywhere
+    
+private:
+    int privateVar;     // Accessible only within AccessDemo
+    
+protected:
+    int protectedVar;   // Accessible within AccessDemo and derived classes
+    
+public:
+    void setPrivate(int value) {
+        privateVar = value;  // OK - inside the class
+    }
+    
+    int getPrivate() const {
+        return privateVar;   // OK - inside the class
+    }
+};
+
+class Derived : public AccessDemo {
+public:
+    void showAccess() {
+        publicVar = 1;       // OK - public is accessible
+        protectedVar = 2;    // OK - protected is accessible in derived class
+        // privateVar = 3;   // ERROR - private not accessible in derived class
+    }
+};
+
+int main() {
+    AccessDemo obj;
+    obj.publicVar = 10;      // OK - public member
+    
+    // obj.privateVar = 20;  // ERROR - private member
+    // obj.protectedVar = 30;// ERROR - protected member (not in derived class)
+    
+    obj.setPrivate(20);      // OK - public member function accesses private
+    
+    return 0;
+}
+Best practice: Default to private for member variables. Use public only for the interface. Use protected only when inheritance specifically requires it.
+
+6.2 Getters and Setters (Detailed)
+Getters provide read access to private data. Setters provide controlled write access.
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Product {
+private:
+    string name_;
+    double price_;
+    int quantity_;
+    
+public:
+    Product(string name, double price, int quantity)
+        : name_(name), price_(price), quantity_(quantity) {}
+    
+    // Getters - const, no modification
+    string getName() const { return name_; }
+    double getPrice() const { return price_; }
+    int getQuantity() const { return quantity_; }
+    
+    // Setters with validation
+    void setPrice(double newPrice) {
+        if (newPrice >= 0) {
+            price_ = newPrice;
+        } else {
+            cout << "Error: Price cannot be negative" << endl;
+        }
+    }
+    
+    void setQuantity(int newQuantity) {
+        if (newQuantity >= 0) {
+            quantity_ = newQuantity;
+        } else {
+            cout << "Error: Quantity cannot be negative" << endl;
+        }
+    }
+    
+    // Business logic
+    double totalValue() const {
+        return price_ * quantity_;
+    }
+};
+
+int main() {
+    Product p("Laptop", 999.99, 10);
+    
+    // Read via getters
+    cout << p.getName() << endl;     // Laptop
+    cout << p.getPrice() << endl;    // 999.99
+    cout << p.getQuantity() << endl; // 10
+    cout << p.totalValue() << endl;  // 9999.9
+    
+    // Modify via setters (validation applied)
+    p.setPrice(1099.99);
+    p.setQuantity(5);
+    
+    cout << p.totalValue() << endl;  // 5499.95
+    
+    p.setPrice(-100);  // Error: Price cannot be negative
+    p.setQuantity(-5); // Error: Quantity cannot be negative
+    
+    return 0;
+}
+When to use getters/setters vs direct access:
+
+Scenario	Recommendation
+Simple data container (no validation)	Use public members or a struct
+Data needs validation	Use setters with validation
+Derived/computed values	Use getters only (no setter)
+Internal implementation detail	Keep private, no getter/setter
+6.3 Accessor vs Mutator Naming Conventions
+Several naming conventions exist for getters and setters.
+
+Convention	Getter Example	Setter Example
+get/set prefix	getName()	setName()
+No prefix (same as variable)	name()	setName()
+Java style	getName()	setName()
+Direct member access (no getter/setter for public)	obj.name	obj.name = value
+This book uses the get/set prefix for clarity, especially for beginners.
+
+cpp
+class Student {
+private:
+    string name_;
+    int grade_;
+    
+public:
+    // Getters with 'get' prefix
+    string getName() const { return name_; }
+    int getGrade() const { return grade_; }
+    
+    // Setters with 'set' prefix
+    void setName(string name) { name_ = name; }
+    void setGrade(int grade) { grade_ = grade; }
+};
+For boolean getters, is or has prefix is common:
+
+cpp
+class Account {
+private:
+    bool active_;
+    
+public:
+    bool isActive() const { return active_; }
+    // Not: getActive()
+};
+6.4 Friend Functions and Classes
+The friend keyword allows a function or another class to access private and protected members. Friendship breaks encapsulation and should be used sparingly.
+
+cpp
+#include <iostream>
+using namespace std;
+
+class BankAccount {
+private:
+    double balance_;
+    
+public:
+    BankAccount(double initial) : balance_(initial) {}
+    
+    // Declare a non-member function as a friend
+    friend void inspectAccount(const BankAccount& account);
+    
+    // Declare another class as a friend
+    friend class Auditor;
+};
+
+// Friend function - can access private members
+void inspectAccount(const BankAccount& account) {
+    cout << "Balance: " << account.balance_ << endl;  // OK - friend
+}
+
+class Auditor {
+public:
+    void audit(const BankAccount& account) {
+        cout << "Auditing: " << account.balance_ << endl;  // OK - friend
+    }
+};
+
+int main() {
+    BankAccount acc(1000);
+    inspectAccount(acc);  // Balance: 1000
+    
+    Auditor a;
+    a.audit(acc);         // Auditing: 1000
+    
+    return 0;
+}
+When friend is appropriate:
+
+Operator overloading (especially << and >>)
+
+Two classes that are tightly coupled (like a container and its iterator)
+
+Testing frameworks that need access to private state
+
+When friend is NOT appropriate:
+
+To avoid writing a proper getter/setter
+
+When the friendship is not documented
+
+When the friend class could use the public interface instead
+
+Warning: Overuse of friend creates tight coupling and makes code harder to maintain.
+
+6.5 Chapter Summary
+public members are accessible anywhere; private members only within the class
+
+Getters provide read access to private data and should be const
+
+Setters provide controlled write access with optional validation
+
+Naming conventions include get/set prefix, no prefix, or direct public members
+
+friend functions and classes bypass encapsulation – use sparingly
+
+Encapsulation protects class invariants – conditions that must always be true
+
+6.6 Check Your Understanding
+Question 1: What is the difference between private and protected?
+
+Answer: private members are not accessible in derived classes. protected members are accessible in derived classes.
+
+Question 2: Why should member variables typically be private?
+
+Answer: To control access and validation, maintain invariants, and allow changing implementation without affecting users of the class.
+
+Question 3: What does const mean after a member function declaration?
+
+Answer: The function promises not to modify any member variables of the object.
+
+Question 4: What is the syntax to declare a non-member function as a friend of a class?
+
+Answer: friend returnType functionName(parameters); inside the class definition.
+
+Question 5: When is a setter necessary instead of a public member variable?
+
+Answer: When validation is required, when setting triggers side effects, or when the internal representation differs from the external interface.
+
+6.7 Hands-on Exercises
+Exercise 1: Create a class BankAccount with private balance_. Write getters and setters where appropriate. The setter for balance should only allow non-negative values. Add a transfer function that is a friend to both source and target accounts.
+
+Solution:
+
+cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class BankAccount {
+private:
+    string owner_;
+    double balance_;
+    
+public:
+    BankAccount(string owner, double initial) 
+        : owner_(owner), balance_(initial) {}
+    
+    string getOwner() const { return owner_; }
+    double getBalance() const { return balance_; }
+    
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance_ = balance_ + amount;
+        }
+    }
+    
+    bool withdraw(double amount) {
+        if (amount > 0 && amount <= balance_) {
+            balance_ = balance_ - amount;
+            return true;
+        }
+        return false;
+    }
+    
+    friend void transfer(BankAccount& from, BankAccount& to, double amount);
+};
+
+// Friend function can access private members of both accounts
+void transfer(BankAccount& from, BankAccount& to, double amount) {
+    if (amount > 0 && amount <= from.balance_) {
+        from.balance_ = from.balance_ - amount;
+        to.balance_ = to.balance_ + amount;
+        cout << "Transferred " << amount << " from " << from.owner_;
+        cout << " to " << to.owner_ << endl;
+    } else {
+        cout << "Transfer failed" << endl;
+    }
+}
+
+int main() {
+    BankAccount alice("Alice", 100);
+    BankAccount bob("Bob", 50);
+    
+    cout << alice.getOwner() << ": $" << alice.getBalance() << endl;  // Alice: $100
+    cout << bob.getOwner() << ": $" << bob.getBalance() << endl;      // Bob: $50
+    
+    transfer(alice, bob, 30);
+    
+    cout << alice.getOwner() << ": $" << alice.getBalance() << endl;  // Alice: $70
+    cout << bob.getOwner() << ": $" << bob.getBalance() << endl;      // Bob: $80
+    
+    return 0;
+}
+Exercise 2: Create a class Thermostat with private temperature_ (Celsius). Add getters and setters. The setter should validate that temperature stays between 10 and 30 degrees. Add a getter isComfortable() that returns true if temperature is between 18 and 25.
+
+Solution:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Thermostat {
+private:
+    double temperature_;
+    
+public:
+    Thermostat(double initial) : temperature_(initial) {}
+    
+    double getTemperature() const {
+        return temperature_;
+    }
+    
+    void setTemperature(double newTemp) {
+        if (newTemp >= 10.0 && newTemp <= 30.0) {
+            temperature_ = newTemp;
+        } else {
+            cout << "Temperature " << newTemp << " out of range (10-30). Setting not changed." << endl;
+        }
+    }
+    
+    bool isComfortable() const {
+        return temperature_ >= 18.0 && temperature_ <= 25.0;
+    }
+};
+
+int main() {
+    Thermostat t(22);
+    cout << t.isComfortable() << endl;     // 1 (true)
+    
+    t.setTemperature(28);
+    cout << t.isComfortable() << endl;     // 0 (false)
+    
+    t.setTemperature(20);
+    cout << t.isComfortable() << endl;     // 1 (true)
+    
+    t.setTemperature(35);  // Error message
+    cout << t.getTemperature() << endl;    // 20 (unchanged)
+    
+    return 0;
+}
+Exercise 3: The following code fails to compile. Identify why and fix it.
+
+cpp
+class Rectangle {
+private:
+    double width;
+    double height;
+    
+public:
+    Rectangle(double w, double h) : width(w), height(h) {}
+};
+
+int main() {
+    Rectangle r1(5, 3);
+    cout << r1.width << " x " << r1.height << endl;
+    return 0;
+}
+Solution: The member variables width and height are private, so they cannot be accessed directly in main(). Add getters or make them public.
+
+Fixed code:
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Rectangle {
+private:
+    double width_;
+    double height_;
+    
+public:
+    Rectangle(double w, double h) : width_(w), height_(h) {}
+    
+    double getWidth() const { return width_; }
+    double getHeight() const { return height_; }
+    double area() const { return width_ * height_; }
+};
+
+int main() {
+    Rectangle r1(5, 3);
+    cout << r1.getWidth() << " x " << r1.getHeight() << " = ";
+    cout << r1.area() << endl;  // 5 x 3 = 15
+    return 0;
+}
